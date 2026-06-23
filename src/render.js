@@ -172,6 +172,7 @@ export class Renderer {
     if (!s) return;
     const { ctx } = this;
     const mag = Math.max(0, Math.min(1, s.mag || 0));
+    if (mag < 0.2) return;   // no aim line at neutral — the eye just looks straight ahead
     const aim = Math.atan2(s.y, s.x);
     const c = ringColor(ring);
 

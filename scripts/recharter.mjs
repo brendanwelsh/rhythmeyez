@@ -54,6 +54,19 @@ const dualSet = new Set();
   }
 }
 
+// CENTER RESTS: at several of the biggest gaps (the song's natural breaths, not claimed by a spin
+// or dual-hold), REWARD LETTING GO — both sticks return to NEUTRAL together. We emit a paired
+// L+R held-centre at that onset; the eyes stare straight ahead and you score for resting on it.
+const centerSet = new Set();
+{
+  const cand = [];
+  for (let i = 12; i < times.length - 1; i++) if (gapAfter(i) > 1.0 && !spinSet.has(i) && !dualSet.has(i)) cand.push(i);
+  cand.sort((a, b) => gapAfter(b) - gapAfter(a));
+  const picked = [];
+  for (const i of cand) { if (picked.every((p) => Math.abs(p - i) >= 12)) { picked.push(i); if (picked.length >= 7) break; } }
+  picked.forEach((i) => centerSet.add(i));
+}
+
 const notes = [];
 let heading = 0;          // running target heading (degrees) — handed note-to-note for flow
 
@@ -64,6 +77,14 @@ for (let k = 0; k < times.length; k++) {
   const pos = k % 8;                       // position within the 8-note phrase
   const dir = phrase % 2 === 0 ? 1 : -1;   // sweep direction flips each phrase
   const ring = k % 2 === 0 ? 'L' : 'R';    // hands alternate
+
+  // --- CENTER REST: let go — both sticks return to neutral together ("breathe") --------------
+  if (centerSet.has(k)) {
+    const span = +Math.min(Math.max(g, 0.5) * 0.6, 0.7).toFixed(3);
+    notes.push({ time: +t.toFixed(3), ring: 'L', center: true, hold: span });
+    notes.push({ time: +t.toFixed(3), ring: 'R', center: true, hold: span });
+    continue;   // heading unchanged — the line resumes after the rest
+  }
 
   // --- DUAL HOLD: park BOTH sticks at this onset (two notes, same time, L + R) ---------------
   if (dualSet.has(k)) {
@@ -120,14 +141,16 @@ fs.writeFileSync(PATH, JSON.stringify(out, null, 2) + '\n');
 // --- report -----------------------------------------------------------------
 const counts = { tap: 0, hold: 0, slide: 0, spin: 0, center: 0 };
 let mods = 0, L = 0, R = 0;
-const holdByTime = {};   // time -> { L, R } count of plain holds, for dual-hold detection
+const holdByTime = {}, centerByTime = {};
 for (const n of notes) {
   const ty = n.center ? 'center' : n.spin > 0 ? 'spin' : n.to != null ? 'slide' : n.hold > 0 ? 'hold' : 'tap';
   counts[ty]++; if (n.mod) mods++; n.ring === 'L' ? L++ : R++;
   if (ty === 'hold') (holdByTime[n.time] = holdByTime[n.time] || { L: 0, R: 0 })[n.ring]++;
+  if (ty === 'center') (centerByTime[n.time] = centerByTime[n.time] || { L: 0, R: 0 })[n.ring]++;
 }
-let dualHolds = 0;
+let dualHolds = 0, dualCenters = 0;
 for (const t in holdByTime) if (holdByTime[t].L > 0 && holdByTime[t].R > 0) dualHolds++;
+for (const t in centerByTime) if (centerByTime[t].L > 0 && centerByTime[t].R > 0) dualCenters++;
 console.log(`re-charted ${notes.length} notes (times preserved)`);
 console.log('types:', counts, '| mods:', mods, '| L/R:', L, R);
-console.log('DUAL-HOLD pairs (same time, L-hold + R-hold):', dualHolds);
+console.log('DUAL-HOLD pairs:', dualHolds, '| CENTER-REST pairs (let go to neutral):', dualCenters);

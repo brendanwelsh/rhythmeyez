@@ -553,6 +553,7 @@ class Game {
       if (dist < bestDist) { bestDist = dist; best = n; }
     }
     if (!best || bestDist > 0.7) return null;
+    if (best.type === 'center') return null;                     // CENTER rest → let go to neutral
     let a;
     if (best.type === 'spin') a = songTime * 14;                 // whirl to fill the gauge
     else a = noteTargetAngle(best, songTime);                    // park / trace the (moving) target

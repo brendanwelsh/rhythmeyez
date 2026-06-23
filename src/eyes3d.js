@@ -15,6 +15,7 @@ import * as THREE from 'three';
 const EYE_R = 1.5;              // eyeball radius (world units)
 const EYE_X = 3.0;              // each eye's distance left/right of centre
 const REACH = 0.9;             // fraction of the radius the pupil travels at full stick (matches the rim)
+const _Z = new THREE.Vector3(0, 0, 1);   // reused: the iris hugs the surface by facing the radial normal
 
 function makeCanvas(s) { const c = document.createElement('canvas'); c.width = c.height = s; return c; }
 
@@ -124,8 +125,11 @@ class Eye {
     const r2 = this._px * this._px + this._py * this._py;
     const pz = Math.sqrt(Math.max(0.04, EYE_R * EYE_R - r2));   // keep it ON the sphere front
     this.cursor.position.set(this._px, this._py, pz);
+    // orient the iris along the surface NORMAL so it hugs the eyeball (one attached piece, not a
+    // flat disc floating on top). At neutral the normal is +Z, so the eye looks straight ahead.
+    this.cursor.quaternion.setFromUnitVectors(_Z, this.cursor.position.clone().normalize());
     this._roll += this.spinDir * dt * 9;
-    this.cursor.rotation.z = this._roll;                        // whirl during a spin
+    this.cursor.rotateZ(this._roll);                            // whirl during a spin
     this._chomp *= Math.pow(0.0001, dt);
     this.cursor.scale.setScalar(1 + this._chomp * 0.18);        // chomp pop on a hit
   }
