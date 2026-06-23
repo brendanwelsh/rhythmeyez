@@ -37,7 +37,7 @@ const spinSet = new Set();
   cand.sort((a, b) => gapAfter(b) - gapAfter(a));
   const picked = [];
   for (const i of cand) {
-    if (picked.every((p) => Math.abs(p - i) >= 14)) { picked.push(i); if (picked.length >= 7) break; }
+    if (picked.every((p) => Math.abs(p - i) >= 30)) { picked.push(i); if (picked.length >= 3) break; }  // ~3 well-spaced spins
   }
   picked.forEach((i) => spinSet.add(i));
 }
@@ -66,6 +66,17 @@ const centerSet = new Set();
   for (const i of cand) { if (picked.every((p) => Math.abs(p - i) >= 12)) { picked.push(i); if (picked.length >= 7) break; } }
   picked.forEach((i) => centerSet.add(i));
 }
+
+// MOTIF phrases: instead of the flowing drift, some phrases run a crisp DIRECTIONAL figure you can
+// feel in the hands — up/down/up/down, left/right/left/right, or a four-corner tap burst. They cycle
+// so they recur through the song. (Taps only — no spins; this is the "tap all 4 corners" feel.)
+const MOTIF_ANGLE = { updown: [270, 90], leftright: [180, 0], corners: [45, 135, 315, 225] };
+function phraseMotif(phrase) {
+  if (phrase < 2) return null;                 // let the intro flow first
+  const m = phrase % 6;
+  return m === 2 ? 'updown' : m === 4 ? 'leftright' : m === 0 ? 'corners' : null;
+}
+function motifAngle(motif, pos) { const a = MOTIF_ANGLE[motif]; return a[pos % a.length]; }
 
 const notes = [];
 let heading = 0;          // running target heading (degrees) — handed note-to-note for flow
@@ -98,14 +109,16 @@ for (let k = 0; k < times.length; k++) {
   }
 
   // --- choose the note type for this slot -------------------------------------
+  const motif = phraseMotif(phrase);
   let type;
   if (spinSet.has(k)) type = 'spin';
+  else if (motif) type = 'tap';                                      // motif phrases are crisp tap figures
   else if (pos === 0 && g > 0.8) type = 'hold';                       // park on the downbeat
   else if (pos === 4 && phrase % 3 === 2 && g > 0.8) type = 'hold';   // a second park, occasionally
   else if (pos === 2 || pos === 5) type = 'slide';                   // two traced lines per phrase
   else type = 'tap';                                                  // staccato backbone
 
-  const note = { time: +t.toFixed(3), ring, angle: wrap360(heading) };
+  const note = { time: +t.toFixed(3), ring, angle: motif ? motifAngle(motif, pos) : wrap360(heading) };
 
   if (type === 'spin') {
     note.spin = (phrase % 3 === 0) ? 3 : 2;
