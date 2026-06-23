@@ -1,4 +1,4 @@
-// main.js — EYEBALLS entry point. State machine + game loop wiring all modules together.
+// main.js — EYE BEATS entry point. State machine + game loop wiring all modules together.
 
 import { AudioEngine } from './audio.js';
 import { GamepadInput } from './input.js';
@@ -10,8 +10,8 @@ import { generateBeatmap, chartToJSON } from './beatgen.js';
 
 const LEAD_IN = 3.0; // seconds of "3..2..1" count-in before the music
 
-const SETTINGS_KEY = 'chumstick.settings';
-const SETTINGS_DEFAULTS = { music: 0.9, sfx: 0.5, offsetMs: 0, noteSpeed: 1.8, haptics: 0.8, difficulty: 'normal' };
+const SETTINGS_KEY = 'eyebeats.settings';
+const SETTINGS_DEFAULTS = { music: 0.9, sfx: 0.5, offsetMs: 0, noteSpeed: 2.6, haptics: 0.8, difficulty: 'normal' };
 
 // Difficulty tiers. The base chart is the "Normal" reference; Easy thins out the taps and widens
 // the hit arcs / timing windows (more forgiving), Hard keeps every note but tightens both so it
@@ -35,9 +35,12 @@ class Game {
     this.input = new GamepadInput();
     this.scorer = new Scorer();
     try { this.eyes = new EyeStage(document.getElementById('eyes3d')); }   // the 3D eyeballs (behind)
-    catch (e) { this.eyes = null; console.warn('EYEBALLS: no WebGL — running 2D overlay only.', e); }
+    catch (e) { this.eyes = null; console.warn('EYE BEATS: no WebGL — running 2D overlay only.', e); }
     this.renderer = new Renderer(document.getElementById('stage')); // 2D laser+HUD overlay (front)
     this._lastRaf = 0;
+
+    // Preload the custom canvas fonts so the HUD can render them (CSS @font-face alone won't trigger it).
+    try { document.fonts && document.fonts.load && Promise.all([document.fonts.load('700 40px "Bungee"'), document.fonts.load('40px "Rubik Wet Paint"')]).catch(() => {}); } catch { /* old browser */ }
 
     this.state = 'title';
     this.demo = false;        // attract/auto-play mode
@@ -262,7 +265,7 @@ class Game {
   }
 
   // --- leaderboard (localStorage, per song + difficulty) -------------------
-  _allScores() { try { return JSON.parse(localStorage.getItem('chumstick.scores') || '{}'); } catch { return {}; } }
+  _allScores() { try { return JSON.parse(localStorage.getItem('eyebeats.scores') || '{}'); } catch { return {}; } }
   _loadScores(title) { return (this._allScores()[title] || []).slice().sort((a, b) => b.score - a.score); }
   /** Storage key for a board — scores are kept separately per song AND difficulty. */
   _lbKey(title) { return `${title} · ${this._diffLabel()}`; }
@@ -271,7 +274,7 @@ class Game {
     const all = this._allScores();
     const list = (all[title] || []).concat([entry]).sort((a, b) => b.score - a.score).slice(0, 10);
     all[title] = list;
-    try { localStorage.setItem('chumstick.scores', JSON.stringify(all)); } catch { /* private mode */ }
+    try { localStorage.setItem('eyebeats.scores', JSON.stringify(all)); } catch { /* private mode */ }
     return list.indexOf(entry);   // rank, or -1 if it didn't make the top 10
   }
 
@@ -298,7 +301,7 @@ class Game {
   _clearLeaderboard() {
     const key = this._lbKey(BUILTIN[0].title);
     const all = this._allScores(); delete all[key];
-    try { localStorage.setItem('chumstick.scores', JSON.stringify(all)); } catch { /* private mode */ }
+    try { localStorage.setItem('eyebeats.scores', JSON.stringify(all)); } catch { /* private mode */ }
     this._renderLeaderboard(this._el('lb-list'), key);
   }
 
@@ -413,6 +416,7 @@ class Game {
     this._lastSongTime = null;
     this._comboTier = 0;       // last crossed combo milestone (×25), for the banner/rumble flourish
     this._lastSustainR = -1;   // song time of the last sustain-hum rumble (throttle)
+    this._mood = 0;            // mouth mood (−1 frown … +1 grin), eased toward combo each frame
     this.input.demoMods = [];  // clear any attract-demo mod holds before a real run
     this._demoDefl = { L: { v: { x: 0, y: 0 }, m: 0 }, R: { v: { x: 0, y: 0 }, m: 0 } };
     this.audio.stop();
@@ -607,9 +611,11 @@ class Game {
     if (!both) this._l2r2was = false;
   }
 
-  /** Per-frame state for the 3D eyes: where each pupil looks (the stick aim) + any live spin. */
+  /** Per-frame state for the 3D eyes: where each pupil looks (stick aim), spins, FOCUS, and the
+   *  mouth mood (smiles with combo, frowns after a miss). */
   _eyeState() {
-    const st = { combo: this.scorer.combo, L: { aim: this.input.left, spinDir: 0 }, R: { aim: this.input.right, spinDir: 0 } };
+    const st = { combo: this.scorer.combo, focus: !!this.scorer.focus, mood: this._mood || 0,
+      L: { aim: this.input.left, spinDir: 0 }, R: { aim: this.input.right, spinDir: 0 } };
     if (this.state === 'playing' && this.chart) {
       const t = this.audio.time;
       for (const n of this.chart.notes) {
@@ -640,8 +646,8 @@ class Game {
       for (const f of this.input.takeFlicks()) this.renderer.addFlick(f); // little flick spark only
       for (const ev of this.scorer.takeEvents()) {
         this.renderer.addEffect(ev);
-        if (ev.judgement !== 'miss' && this.eyes) this.eyes.chomp(ev.ring);  // eye "eats" the laser (inverted wakka)
-        if (ev.judgement === 'miss') this.audio.glitch();   // Guitar-Hero: miss glitches the mix
+        if (ev.judgement !== 'miss' && this.eyes) this.eyes.chomp(ev.ring);  // eye "eats" the note
+        if (ev.judgement === 'miss') { this.audio.glitch(); this._mood = -1; }  // miss → glitch + frown
         if (!this.demo) this.input.rumbleCue(ev.judgement); // controller IS the hit feedback (hits are silent)
         this._flashJudge(ev.judgement);
       }
@@ -662,11 +668,14 @@ class Game {
 
     // The 3D eyeballs render EVERY frame (they follow the sticks even in the menus); the 2D laser
     // overlay draws on top and targets each eye's projected screen position.
+    // mouth mood eases toward a smile sized by combo (a miss snapped it to a frown above)
+    const moodTarget = Math.min(1, this.scorer.combo / 25);
+    this._mood = (this._mood || 0) + (moodTarget - (this._mood || 0)) * Math.min(1, fdt * 1.5);
     if (this.eyes) try {
       this.eyes.update(this._eyeState(), fdt);
       this.eyes.render();
     } catch (e) {
-      if (!this._eyesDead) { this._eyesDead = true; console.error('EYEBALLS 3D error:', e); }
+      if (!this._eyesDead) { this._eyesDead = true; console.error('EYE BEATS 3D error:', e); }
     }
     try {
       this.renderer.drawGame({ chart: live ? this.chart : null, songTime, scorer: this.scorer, input: this.input, playing: this.state === 'playing', demo: this.demo, eyes: this.eyes ? this.eyes.screen : null });

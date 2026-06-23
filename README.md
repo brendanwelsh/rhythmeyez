@@ -1,9 +1,9 @@
-# 👁 EYEBALLS
+# 👁 EYE BEATS
 
 > An **optical dual-analog-stick rhythm game**. Two **realistic 3D eyeballs** (Three.js) are your
 > **pupils** — push a stick and that eye looks *outward* toward the incoming light; centre the stick
 > and it stares straight back at you. **Lasers** (the notes) streak IN from every direction and you
-> orient each eye to "eat" them on the beat — *inverted wakka*. Keep up and the track plays clean;
+> orient each eye to "eat" them on the beat. Keep up and the track plays clean;
 > slip and the mix glitches. Pure black, electric/acid/LCD, the whites going **bloodshot** as your
 > combo climbs. Built on **Three.js + Canvas + Web Audio**, no build step, runs in a browser tab.
 >
@@ -21,7 +21,7 @@ is **continuous and presence-based**, judged every frame. Five note types, each 
 - **slide** — the contact point sweeps around the rim; trace the moving laser.
 - **spin** — whirl the stick to fill a gauge; the **eye spins** (either direction, and one eye can
   spin solo while the other does something else — *spin frenzy*).
-- **center** — the "inverted wakka" beat: pull the stick to **neutral** so the eye stares dead
+- **center** — the beat: pull the stick to **neutral** so the eye stares dead
   ahead. Concentric rings close onto the pupil to cue it.
 
 **Modifiers are shoulders/triggers only** (`L1 / R1 / L2 / R2`) so you never lift a thumb off a

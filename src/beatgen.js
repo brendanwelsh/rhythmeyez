@@ -77,7 +77,7 @@ function pickAngle(i, ring) {
   return Math.round(a);
 }
 
-const MOD_CYCLE = ['L1', 'R1', 'L2', 'R2'];  // shoulders/triggers only (no face buttons in EYEBALLS)
+const MOD_CYCLE = ['L1', 'R1', 'L2', 'R2'];  // shoulders/triggers only (no face buttons in EYE BEATS)
 
 /**
  * Turn onset times into FLOW notes. Runs of tightly-spaced onsets become a slide (a line you

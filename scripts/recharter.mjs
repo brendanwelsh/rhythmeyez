@@ -8,6 +8,8 @@
 //   • taps as the staccato backbone (you flick onto the heading as the fish crosses),
 //   • a couple of slides per phrase for the connected "draw a line" moments,
 //   • a parked hold on most downbeats,
+//   • a DUAL HOLD on roughly every other phrase's downbeat — an L-hold + an R-hold at the SAME
+//     onset time, so the player parks BOTH sticks at once (the signature "hold both eyes" beat),
 //   • a spinner to fill the big section-boundary gaps,
 //   • the odd modifier button on an accent for spice.
 //
@@ -40,6 +42,18 @@ const spinSet = new Set();
   picked.forEach((i) => spinSet.add(i));
 }
 
+// DUAL-HOLD slots: the downbeat (pos 0) of roughly every other phrase becomes a paired L+R hold —
+// the player parks BOTH sticks at once. We emit two notes at that onset (one per ring) instead of
+// one. Skip phrase 0 (easy intro) and any downbeat already claimed by a spinner.
+const dualSet = new Set();
+{
+  const phraseCount = Math.ceil(times.length / 8);
+  for (let p = 1; p < phraseCount; p += 2) {           // every OTHER phrase -> ~1 per 2 phrases
+    const k = p * 8;                                    // its downbeat note index
+    if (k < times.length && !spinSet.has(k)) dualSet.add(k);
+  }
+}
+
 const notes = [];
 let heading = 0;          // running target heading (degrees) — handed note-to-note for flow
 
@@ -50,6 +64,17 @@ for (let k = 0; k < times.length; k++) {
   const pos = k % 8;                       // position within the 8-note phrase
   const dir = phrase % 2 === 0 ? 1 : -1;   // sweep direction flips each phrase
   const ring = k % 2 === 0 ? 'L' : 'R';    // hands alternate
+
+  // --- DUAL HOLD: park BOTH sticks at this onset (two notes, same time, L + R) ---------------
+  if (dualSet.has(k)) {
+    const span = +Math.min(Math.max(g, 0.45) * 0.7, 0.85).toFixed(3); // overlapping hold spans
+    const aL = wrap360(heading);
+    const aR = wrap360(heading + 180);     // opposite headings so the two eyes splay apart
+    notes.push({ time: +t.toFixed(3), ring: 'L', angle: aL, hold: span });
+    notes.push({ time: +t.toFixed(3), ring: 'R', angle: aR, hold: span });
+    heading = wrap360(heading + 30 * dir); // advance the line for the next note
+    continue;
+  }
 
   // --- choose the note type for this slot -------------------------------------
   let type;
@@ -93,11 +118,16 @@ const out = {
 fs.writeFileSync(PATH, JSON.stringify(out, null, 2) + '\n');
 
 // --- report -----------------------------------------------------------------
-const counts = { tap: 0, hold: 0, slide: 0, spin: 0 };
+const counts = { tap: 0, hold: 0, slide: 0, spin: 0, center: 0 };
 let mods = 0, L = 0, R = 0;
+const holdByTime = {};   // time -> { L, R } count of plain holds, for dual-hold detection
 for (const n of notes) {
-  const ty = n.spin > 0 ? 'spin' : n.to != null ? 'slide' : n.hold > 0 ? 'hold' : 'tap';
+  const ty = n.center ? 'center' : n.spin > 0 ? 'spin' : n.to != null ? 'slide' : n.hold > 0 ? 'hold' : 'tap';
   counts[ty]++; if (n.mod) mods++; n.ring === 'L' ? L++ : R++;
+  if (ty === 'hold') (holdByTime[n.time] = holdByTime[n.time] || { L: 0, R: 0 })[n.ring]++;
 }
+let dualHolds = 0;
+for (const t in holdByTime) if (holdByTime[t].L > 0 && holdByTime[t].R > 0) dualHolds++;
 console.log(`re-charted ${notes.length} notes (times preserved)`);
 console.log('types:', counts, '| mods:', mods, '| L/R:', L, R);
+console.log('DUAL-HOLD pairs (same time, L-hold + R-hold):', dualHolds);

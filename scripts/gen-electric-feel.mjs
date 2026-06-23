@@ -66,6 +66,14 @@ for (let p = 3; p < totalPhrases; p += 3) {
   spinPhrases.set(p, { both: (Math.floor(p / 3)) % 2 === 0 });
 }
 
+// Pick DUAL-HOLD phrases: the downbeat (pos 0) becomes a paired L-hold + R-hold at the SAME time
+// so the player parks BOTH sticks at once. Roughly one every other phrase (~1 per 2 phrases),
+// skipping phrase 0 (easy intro) and any phrase already claimed by a spinner.
+const dualHoldPhrases = new Set();
+for (let p = 2; p < totalPhrases; p += 2) {
+  if (!spinPhrases.has(p)) dualHoldPhrases.add(p);
+}
+
 const notes = [];
 let heading = 0;       // running target heading (deg) handed note-to-note
 let sweepDir = 1;      // flips per phrase so the stick path snakes back and forth
@@ -100,6 +108,16 @@ for (let i = 0; i < beats.length; i++) {
       hand++;
     }
     heading = wrap360(heading + 50 * sweepDir);
+    continue;
+  }
+
+  // --- DUAL HOLD injection: park BOTH eyes on this phrase's downbeat (two notes, same time) ---
+  if (dualHoldPhrases.has(phrase) && pos === 0) {
+    const span = round3(SEC_PER_BEAT * 1.4); // overlapping ~1.5-beat parks on both rings
+    notes.push({ time: round3(t), ring: 'L', angle: wrap360(heading), hold: span });
+    notes.push({ time: round3(t), ring: 'R', angle: wrap360(heading + 180), hold: span });
+    // these consume the downbeat without advancing the L/R `hand` counter (self-balanced pair)
+    heading = wrap360(heading + 30 * sweepDir);
     continue;
   }
 
@@ -156,6 +174,7 @@ fs.writeFileSync(OUT, JSON.stringify(out, null, 2) + '\n');
 // --- report -----------------------------------------------------------------
 const counts = { tap: 0, hold: 0, slide: 0, spin: 0, center: 0 };
 let mods = 0, L = 0, R = 0, soloSpins = 0, bothSpinNotes = 0;
+const holdByTime = {};   // time -> { L, R } count of plain holds, for dual-hold detection
 for (const n of notes) {
   let ty;
   if (n.center) ty = 'center';
@@ -166,7 +185,10 @@ for (const n of notes) {
   counts[ty]++;
   if (n.mod) mods++;
   n.ring === 'L' ? L++ : R++;
+  if (ty === 'hold') (holdByTime[n.time] = holdByTime[n.time] || { L: 0, R: 0 })[n.ring]++;
 }
+let dualHolds = 0;
+for (const t in holdByTime) if (holdByTime[t].L > 0 && holdByTime[t].R > 0) dualHolds++;
 // count solo-eye spin phrases vs both-eye spin phrases from the planner
 let soloPhrases = 0, bothPhrases = 0;
 for (const { both } of spinPhrases.values()) both ? bothPhrases++ : soloPhrases++;
@@ -181,3 +203,4 @@ console.log(`L/R balance: L=${L}  R=${R}`);
 console.log(`mods: ${mods}  (${pct(mods)})`);
 console.log(`center: ${counts.center}  (${pct(counts.center)})`);
 console.log(`spin notes: ${counts.spin}  | spin phrases: ${spinPhrases.size}  (solo-eye=${soloPhrases}, both-eyes=${bothPhrases})`);
+console.log(`DUAL-HOLD pairs (same time, L-hold + R-hold): ${dualHolds}  | dual-hold phrases planned: ${dualHoldPhrases.size}`);

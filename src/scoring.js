@@ -16,6 +16,7 @@ export const WINDOWS = { perfect: 0.05, good: 0.13 };  // tap timing windows (±
 const SCORE = { perfect: 300, good: 100, miss: 0 };
 const HOLD_BONUS = 150;                 // bonus for clearing a sustained note
 const SUSTAIN_RATE = 220;               // points/second while satisfying a hold/slide/spin
+const FOCUS_RATE = 240;                 // bonus points/second while BOTH eyes are on-target (FOCUS)
 
 // How close (radians) the stick heading must be to the target to count as "on it". Generous on
 // purpose — flow over precision. Slides/holds are looser than taps; spins only need engagement.
@@ -43,6 +44,7 @@ export class Scorer {
     this.maxCombo = 0;
     this.counts = { perfect: 0, good: 0, miss: 0 };
     this.totalJudged = 0;
+    this.focus = false;   // BOTH eyes satisfying a note this frame → glasses surge + bonus
     this.events = [];   // judgement popups for the renderer to consume
   }
 
@@ -175,6 +177,13 @@ export class Scorer {
         this._resolve(n, cov >= 0.82 ? 'perfect' : cov >= 0.4 ? 'good' : 'miss', songTime);
       }
     }
+
+    // FOCUS — the glasses' function: while BOTH eyes are satisfying a note at once (the dual-hold
+    // sweet spot), you earn a steady bonus and the specs light up.
+    let litL = false, litR = false;
+    for (const n of notes) { if (n.lit) { if (n.ring === 'L') litL = true; else litR = true; } }
+    this.focus = litL && litR;
+    if (this.focus) this.score += Math.round(FOCUS_RATE * dt);
   }
 
   takeEvents() { const e = this.events; this.events = []; return e; }

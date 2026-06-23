@@ -97,7 +97,7 @@ export function normalizeChart(raw) {
       // --- note vocabulary (flow model) -----------------------------------
       // spin: rotate the stick to fill a gauge.   slide: trace a moving target along the ring.
       // hold: keep the stick parked in the arc.    tap: just BE in the arc as it crosses.
-      // center: pull the stick to NEUTRAL (the eye stares straight ahead — "inverted wakka").
+      // center: pull the stick to NEUTRAL (the eye stares straight ahead).
       const isCenter = n.center === true;
       const isSpin = n.spin === true || (Number(n.spin) || 0) > 0;
       const hasTo = n.to != null && isFinite(n.to);

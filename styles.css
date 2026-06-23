@@ -168,30 +168,31 @@ html, body {
 }
 
 h2 {
-  font-size: clamp(22px, 4vw, 40px); letter-spacing: 0.35em; font-weight: 900;
-  color: var(--text); text-shadow: 0 0 22px var(--r);
+  font-family: 'Bungee', ui-monospace, sans-serif;
+  font-size: clamp(20px, 3.6vw, 36px); letter-spacing: 0.08em; font-weight: 400;
+  color: var(--text); text-shadow: 0 0 22px var(--r); animation: trip 9s linear infinite;
 }
 
-/* ---------- EYEBALLS title (Anton, electric neon) ---------- */
-.eye-title { text-align: center; line-height: 0.9; margin: 2px 0; }
+/* ---------- EYE BEATS title (Rubik Wet Paint, rainbow trip) ---------- */
+.eye-title { text-align: center; line-height: 0.95; margin: 2px 0; }
 .eye-main {
   display: block;
-  font-family: 'Eyeball', 'Bebas Neue', Impact, sans-serif; text-transform: uppercase;
-  font-size: clamp(48px, 13vw, 150px); letter-spacing: clamp(-2px, -0.1vw, 0px);
+  font-family: 'Rubik Wet Paint', 'Eyeball', Impact, sans-serif; text-transform: uppercase;
+  font-size: clamp(44px, 12vw, 140px); letter-spacing: clamp(-1px, 0.2vw, 3px);
   color: #fff;
-  text-shadow: 0 0 8px #fff, 0 0 26px var(--l), 0 0 52px var(--r), 0 0 90px var(--r);
-  animation: buzz 3s ease-in-out infinite;
+  text-shadow: 0 0 8px #fff, 0 0 26px var(--l), 0 0 52px var(--r), 0 0 90px var(--acid);
+  animation: trip 7s linear infinite;
 }
-.eye-main .o { font-size: 0.8em; filter: drop-shadow(0 0 12px var(--acid)); }
+.eye-main .o { font-size: 0.92em; filter: drop-shadow(0 0 16px var(--acid)); animation: spin360 4s linear infinite; display: inline-block; }
 .eye-sub {
-  display: block; margin-top: 6px;
-  font-family: ui-monospace, monospace; font-weight: 700; text-transform: uppercase;
-  font-size: clamp(11px, 2.2vw, 18px); letter-spacing: clamp(2px, 0.8vw, 8px);
+  display: block; margin-top: 10px;
+  font-family: 'Bungee', ui-monospace, monospace; text-transform: uppercase;
+  font-size: clamp(10px, 2vw, 16px); letter-spacing: clamp(1px, 0.5vw, 5px);
   color: var(--acid); text-shadow: 0 0 16px rgba(200,255,0,0.6);
 }
-@keyframes buzz {
-  50% { text-shadow: 0 0 10px #fff, 0 0 36px var(--r), 0 0 64px var(--l), 0 0 110px var(--l); }
-}
+/* rainbow hue-cycle the whole title glow — the LSD trip */
+@keyframes trip { from { filter: hue-rotate(0deg); } to { filter: hue-rotate(360deg); } }
+@keyframes spin360 { to { transform: rotate(360deg); } }
 .splash-hint { max-width: 620px; color: var(--dim); font-size: 14px; line-height: 1.6; text-shadow: 0 0 10px rgba(0,0,0,0.9); }
 .hint { max-width: 720px; color: var(--dim); font-size: 14px; line-height: 1.6; }
 .hint b.l { color: var(--l); } .hint b.r { color: var(--r); }
