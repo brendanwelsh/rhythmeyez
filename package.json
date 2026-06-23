@@ -1,0 +1,12 @@
+{
+  "name": "eyeballs",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "EYEBALLS — an optical dual-analog-stick rhythm game. Two REALISTIC 3D eyeballs (Three.js) are your pupils, looking out at lasers that streak in from every direction (inverted wakka). Black/acid/LCD. Vanilla JS + Three.js + Canvas + Web Audio. No build step.",
+  "scripts": {
+    "start": "npx --yes serve .",
+    "test": "node scripts/sim.test.mjs && node scripts/render.smoke.mjs"
+  },
+  "license": "UNLICENSED"
+}

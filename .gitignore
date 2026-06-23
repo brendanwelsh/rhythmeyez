@@ -1,0 +1,29 @@
+# --- Audio: never commit copyrighted tracks ---
+# Everything in assets/ is local-only except its README and any .example files.
+assets/*
+!assets/README.md
+!assets/.gitkeep
+!assets/*.example
+
+# Common audio extensions, anywhere (belt and suspenders)
+*.mp3
+*.ogg
+*.wav
+*.flac
+*.m4a
+*.aac
+*.opus
+
+# --- Fan font: keep local, never publish (committed Anton OFL is the published title face) ---
+brand/amity-jack.ttf
+
+# --- Node / tooling (in case a dev server or tool is added later) ---
+node_modules/
+package-lock.json
+.DS_Store
+Thumbs.db
+*.log
+
+# Editor
+.vscode/
+.idea/

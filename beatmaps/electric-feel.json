@@ -1,0 +1,2449 @@
+{
+  "meta": {
+    "title": "Electric Feel (Justice Remix)",
+    "artist": "MGMT / Justice",
+    "audio": "electric-feel.mp3",
+    "bpm": 107,
+    "offset": 0,
+    "approachTime": 1.8,
+    "difficulty": "Normal"
+  },
+  "notes": [
+    {
+      "time": 4.486,
+      "ring": "L",
+      "angle": 0,
+      "hold": 0.785
+    },
+    {
+      "time": 5.047,
+      "ring": "R",
+      "angle": 28
+    },
+    {
+      "time": 5.607,
+      "ring": "L",
+      "angle": 58,
+      "to": 145,
+      "hold": 0.505
+    },
+    {
+      "time": 6.729,
+      "ring": "R",
+      "angle": 145
+    },
+    {
+      "time": 7.29,
+      "ring": "L",
+      "angle": 175,
+      "to": 264,
+      "hold": 0.505
+    },
+    {
+      "time": 7.85,
+      "ring": "R",
+      "angle": 264
+    },
+    {
+      "time": 8.972,
+      "ring": "L",
+      "center": true,
+      "angle": 294
+    },
+    {
+      "time": 9.533,
+      "ring": "R",
+      "angle": 270
+    },
+    {
+      "time": 10.093,
+      "ring": "L",
+      "angle": 240,
+      "hold": 0.785
+    },
+    {
+      "time": 11.215,
+      "ring": "R",
+      "angle": 212,
+      "to": 136,
+      "hold": 0.505
+    },
+    {
+      "time": 11.776,
+      "ring": "L",
+      "angle": 136
+    },
+    {
+      "time": 12.336,
+      "ring": "R",
+      "angle": 106
+    },
+    {
+      "time": 13.458,
+      "ring": "L",
+      "angle": 76
+    },
+    {
+      "time": 14.019,
+      "ring": "R",
+      "angle": 106
+    },
+    {
+      "time": 14.579,
+      "ring": "L",
+      "angle": 136,
+      "to": 219,
+      "hold": 0.505
+    },
+    {
+      "time": 15.701,
+      "ring": "R",
+      "angle": 219,
+      "hold": 0.785
+    },
+    {
+      "time": 16.262,
+      "ring": "L",
+      "angle": 247
+    },
+    {
+      "time": 16.822,
+      "ring": "R",
+      "angle": 277,
+      "to": 337,
+      "hold": 0.505
+    },
+    {
+      "time": 17.944,
+      "ring": "L",
+      "angle": 337,
+      "spin": 3,
+      "hold": 1.402,
+      "spinDir": -1
+    },
+    {
+      "time": 19.065,
+      "ring": "R",
+      "angle": 287,
+      "hold": 0.785
+    },
+    {
+      "time": 19.626,
+      "ring": "L",
+      "angle": 259
+    },
+    {
+      "time": 20.187,
+      "ring": "R",
+      "angle": 229,
+      "to": 161,
+      "hold": 0.505
+    },
+    {
+      "time": 21.308,
+      "ring": "L",
+      "angle": 161
+    },
+    {
+      "time": 21.869,
+      "ring": "R",
+      "center": true,
+      "angle": 131
+    },
+    {
+      "time": 22.43,
+      "ring": "L",
+      "angle": 107,
+      "hold": 0.785
+    },
+    {
+      "time": 22.991,
+      "ring": "R",
+      "angle": 135
+    },
+    {
+      "time": 23.551,
+      "ring": "L",
+      "angle": 165,
+      "to": 241,
+      "hold": 0.505
+    },
+    {
+      "time": 24.673,
+      "ring": "R",
+      "angle": 241
+    },
+    {
+      "time": 25.234,
+      "ring": "L",
+      "angle": 271,
+      "to": 350,
+      "hold": 0.505
+    },
+    {
+      "time": 25.794,
+      "ring": "R",
+      "angle": 350
+    },
+    {
+      "time": 26.916,
+      "ring": "L",
+      "center": true,
+      "angle": 20
+    },
+    {
+      "time": 27.477,
+      "ring": "R",
+      "angle": 356
+    },
+    {
+      "time": 28.037,
+      "ring": "L",
+      "angle": 326,
+      "hold": 0.785
+    },
+    {
+      "time": 29.159,
+      "ring": "R",
+      "angle": 298,
+      "to": 237,
+      "hold": 0.505
+    },
+    {
+      "time": 29.72,
+      "ring": "L",
+      "angle": 237,
+      "mod": "L2"
+    },
+    {
+      "time": 30.28,
+      "ring": "R",
+      "angle": 207
+    },
+    {
+      "time": 31.402,
+      "ring": "L",
+      "angle": 177,
+      "spin": 3,
+      "hold": 1.682,
+      "spinDir": 1
+    },
+    {
+      "time": 31.402,
+      "ring": "R",
+      "angle": 357,
+      "spin": 3,
+      "hold": 1.682,
+      "spinDir": -1
+    },
+    {
+      "time": 31.963,
+      "ring": "L",
+      "angle": 227
+    },
+    {
+      "time": 32.523,
+      "ring": "R",
+      "angle": 257,
+      "to": 325,
+      "hold": 0.505
+    },
+    {
+      "time": 33.645,
+      "ring": "L",
+      "angle": 325,
+      "hold": 0.785
+    },
+    {
+      "time": 34.206,
+      "ring": "R",
+      "angle": 353
+    },
+    {
+      "time": 34.766,
+      "ring": "L",
+      "angle": 23,
+      "to": 100,
+      "hold": 0.505
+    },
+    {
+      "time": 35.888,
+      "ring": "R",
+      "center": true,
+      "angle": 100
+    },
+    {
+      "time": 37.009,
+      "ring": "L",
+      "angle": 76,
+      "hold": 0.785
+    },
+    {
+      "time": 37.57,
+      "ring": "R",
+      "angle": 48
+    },
+    {
+      "time": 38.131,
+      "ring": "L",
+      "angle": 18,
+      "to": 309,
+      "hold": 0.505
+    },
+    {
+      "time": 39.252,
+      "ring": "R",
+      "angle": 309
+    },
+    {
+      "time": 39.813,
+      "ring": "L",
+      "center": true,
+      "angle": 279
+    },
+    {
+      "time": 40.374,
+      "ring": "R",
+      "angle": 255,
+      "hold": 0.785
+    },
+    {
+      "time": 40.935,
+      "ring": "L",
+      "angle": 283
+    },
+    {
+      "time": 41.495,
+      "ring": "R",
+      "angle": 313,
+      "to": 14,
+      "hold": 0.505
+    },
+    {
+      "time": 42.617,
+      "ring": "L",
+      "angle": 14
+    },
+    {
+      "time": 43.178,
+      "ring": "R",
+      "angle": 44,
+      "to": 107,
+      "hold": 0.505
+    },
+    {
+      "time": 43.738,
+      "ring": "L",
+      "angle": 107
+    },
+    {
+      "time": 44.86,
+      "ring": "R",
+      "angle": 137,
+      "spin": 3,
+      "hold": 1.402,
+      "spinDir": -1
+    },
+    {
+      "time": 45.421,
+      "ring": "L",
+      "angle": 87
+    },
+    {
+      "time": 45.981,
+      "ring": "R",
+      "angle": 57,
+      "hold": 0.785
+    },
+    {
+      "time": 47.103,
+      "ring": "L",
+      "angle": 29,
+      "to": 312,
+      "hold": 0.505
+    },
+    {
+      "time": 47.664,
+      "ring": "R",
+      "angle": 312,
+      "mod": "L1"
+    },
+    {
+      "time": 48.224,
+      "ring": "L",
+      "angle": 282
+    },
+    {
+      "time": 49.346,
+      "ring": "R",
+      "angle": 252
+    },
+    {
+      "time": 49.907,
+      "ring": "L",
+      "angle": 282
+    },
+    {
+      "time": 50.467,
+      "ring": "R",
+      "angle": 312,
+      "to": 21,
+      "hold": 0.505
+    },
+    {
+      "time": 51.589,
+      "ring": "L",
+      "angle": 21,
+      "hold": 0.785
+    },
+    {
+      "time": 52.15,
+      "ring": "R",
+      "angle": 49
+    },
+    {
+      "time": 52.71,
+      "ring": "L",
+      "angle": 79,
+      "to": 167,
+      "hold": 0.505
+    },
+    {
+      "time": 53.832,
+      "ring": "R",
+      "center": true,
+      "angle": 167
+    },
+    {
+      "time": 54.953,
+      "ring": "L",
+      "angle": 143,
+      "hold": 0.785
+    },
+    {
+      "time": 55.514,
+      "ring": "R",
+      "angle": 115
+    },
+    {
+      "time": 56.075,
+      "ring": "L",
+      "angle": 85,
+      "to": 2,
+      "hold": 0.505
+    },
+    {
+      "time": 57.196,
+      "ring": "R",
+      "angle": 2
+    },
+    {
+      "time": 57.757,
+      "ring": "L",
+      "center": true,
+      "angle": 332
+    },
+    {
+      "time": 58.318,
+      "ring": "L",
+      "angle": 308,
+      "spin": 3,
+      "hold": 1.682,
+      "spinDir": 1
+    },
+    {
+      "time": 58.318,
+      "ring": "R",
+      "angle": 128,
+      "spin": 3,
+      "hold": 1.682,
+      "spinDir": -1
+    },
+    {
+      "time": 58.879,
+      "ring": "R",
+      "angle": 358
+    },
+    {
+      "time": 59.439,
+      "ring": "L",
+      "angle": 28,
+      "to": 105,
+      "hold": 0.505
+    },
+    {
+      "time": 60.561,
+      "ring": "R",
+      "angle": 105
+    },
+    {
+      "time": 61.121,
+      "ring": "L",
+      "angle": 135,
+      "to": 209,
+      "hold": 0.505
+    },
+    {
+      "time": 61.682,
+      "ring": "R",
+      "angle": 209
+    },
+    {
+      "time": 62.804,
+      "ring": "L",
+      "center": true,
+      "angle": 239
+    },
+    {
+      "time": 63.364,
+      "ring": "R",
+      "angle": 215
+    },
+    {
+      "time": 63.925,
+      "ring": "L",
+      "angle": 185,
+      "hold": 0.785
+    },
+    {
+      "time": 65.047,
+      "ring": "R",
+      "angle": 157,
+      "to": 69,
+      "hold": 0.505
+    },
+    {
+      "time": 65.607,
+      "ring": "L",
+      "angle": 69,
+      "mod": "L2"
+    },
+    {
+      "time": 66.168,
+      "ring": "R",
+      "angle": 39
+    },
+    {
+      "time": 67.29,
+      "ring": "L",
+      "angle": 9
+    },
+    {
+      "time": 67.85,
+      "ring": "R",
+      "angle": 39
+    },
+    {
+      "time": 68.411,
+      "ring": "L",
+      "angle": 69,
+      "to": 153,
+      "hold": 0.505
+    },
+    {
+      "time": 69.533,
+      "ring": "R",
+      "angle": 153,
+      "hold": 0.785
+    },
+    {
+      "time": 70.093,
+      "ring": "L",
+      "angle": 181
+    },
+    {
+      "time": 70.654,
+      "ring": "R",
+      "angle": 211,
+      "to": 300,
+      "hold": 0.505
+    },
+    {
+      "time": 71.776,
+      "ring": "L",
+      "angle": 300,
+      "spin": 3,
+      "hold": 1.402,
+      "spinDir": -1
+    },
+    {
+      "time": 72.897,
+      "ring": "R",
+      "angle": 250,
+      "hold": 0.785
+    },
+    {
+      "time": 73.458,
+      "ring": "L",
+      "angle": 222
+    },
+    {
+      "time": 74.019,
+      "ring": "R",
+      "angle": 192,
+      "to": 102,
+      "hold": 0.505
+    },
+    {
+      "time": 75.14,
+      "ring": "L",
+      "angle": 102
+    },
+    {
+      "time": 75.701,
+      "ring": "R",
+      "center": true,
+      "angle": 72
+    },
+    {
+      "time": 76.262,
+      "ring": "L",
+      "angle": 48,
+      "hold": 0.785
+    },
+    {
+      "time": 76.822,
+      "ring": "R",
+      "angle": 76
+    },
+    {
+      "time": 77.383,
+      "ring": "L",
+      "angle": 106,
+      "to": 194,
+      "hold": 0.505
+    },
+    {
+      "time": 78.505,
+      "ring": "R",
+      "angle": 194
+    },
+    {
+      "time": 79.065,
+      "ring": "L",
+      "angle": 224,
+      "to": 310,
+      "hold": 0.505
+    },
+    {
+      "time": 79.626,
+      "ring": "R",
+      "angle": 310
+    },
+    {
+      "time": 80.748,
+      "ring": "L",
+      "center": true,
+      "angle": 340
+    },
+    {
+      "time": 81.308,
+      "ring": "R",
+      "angle": 316
+    },
+    {
+      "time": 81.869,
+      "ring": "L",
+      "angle": 286,
+      "hold": 0.785
+    },
+    {
+      "time": 82.991,
+      "ring": "R",
+      "angle": 258,
+      "to": 169,
+      "hold": 0.505
+    },
+    {
+      "time": 83.551,
+      "ring": "L",
+      "angle": 169,
+      "mod": "L1"
+    },
+    {
+      "time": 84.112,
+      "ring": "R",
+      "angle": 139
+    },
+    {
+      "time": 85.234,
+      "ring": "L",
+      "angle": 109,
+      "spin": 3,
+      "hold": 1.682,
+      "spinDir": 1
+    },
+    {
+      "time": 85.234,
+      "ring": "R",
+      "angle": 289,
+      "spin": 3,
+      "hold": 1.682,
+      "spinDir": -1
+    },
+    {
+      "time": 85.794,
+      "ring": "L",
+      "angle": 159
+    },
+    {
+      "time": 86.355,
+      "ring": "R",
+      "angle": 189,
+      "to": 279,
+      "hold": 0.505
+    },
+    {
+      "time": 87.477,
+      "ring": "L",
+      "angle": 279,
+      "hold": 0.785
+    },
+    {
+      "time": 88.037,
+      "ring": "R",
+      "angle": 307
+    },
+    {
+      "time": 88.598,
+      "ring": "L",
+      "angle": 337,
+      "to": 58,
+      "hold": 0.505
+    },
+    {
+      "time": 89.72,
+      "ring": "R",
+      "center": true,
+      "angle": 58
+    },
+    {
+      "time": 90.841,
+      "ring": "L",
+      "angle": 34,
+      "hold": 0.785
+    },
+    {
+      "time": 91.402,
+      "ring": "R",
+      "angle": 6
+    },
+    {
+      "time": 91.963,
+      "ring": "L",
+      "angle": 336,
+      "to": 250,
+      "hold": 0.505
+    },
+    {
+      "time": 93.084,
+      "ring": "R",
+      "angle": 250
+    },
+    {
+      "time": 93.645,
+      "ring": "L",
+      "center": true,
+      "angle": 220
+    },
+    {
+      "time": 94.206,
+      "ring": "R",
+      "angle": 196,
+      "hold": 0.785
+    },
+    {
+      "time": 94.766,
+      "ring": "L",
+      "angle": 224
+    },
+    {
+      "time": 95.327,
+      "ring": "R",
+      "angle": 254,
+      "to": 343,
+      "hold": 0.505
+    },
+    {
+      "time": 96.449,
+      "ring": "L",
+      "angle": 343
+    },
+    {
+      "time": 97.009,
+      "ring": "R",
+      "angle": 13,
+      "to": 103,
+      "hold": 0.505
+    },
+    {
+      "time": 97.57,
+      "ring": "L",
+      "angle": 103
+    },
+    {
+      "time": 98.692,
+      "ring": "R",
+      "angle": 133,
+      "spin": 3,
+      "hold": 1.402,
+      "spinDir": -1
+    },
+    {
+      "time": 99.252,
+      "ring": "L",
+      "angle": 83
+    },
+    {
+      "time": 99.813,
+      "ring": "R",
+      "angle": 53,
+      "hold": 0.785
+    },
+    {
+      "time": 100.935,
+      "ring": "L",
+      "angle": 25,
+      "to": 304,
+      "hold": 0.505
+    },
+    {
+      "time": 101.495,
+      "ring": "R",
+      "angle": 304,
+      "mod": "L2"
+    },
+    {
+      "time": 102.056,
+      "ring": "L",
+      "angle": 274
+    },
+    {
+      "time": 103.178,
+      "ring": "R",
+      "angle": 244
+    },
+    {
+      "time": 103.738,
+      "ring": "L",
+      "angle": 274
+    },
+    {
+      "time": 104.299,
+      "ring": "R",
+      "angle": 304,
+      "to": 30,
+      "hold": 0.505
+    },
+    {
+      "time": 105.421,
+      "ring": "L",
+      "angle": 30,
+      "hold": 0.785
+    },
+    {
+      "time": 105.981,
+      "ring": "R",
+      "angle": 58
+    },
+    {
+      "time": 106.542,
+      "ring": "L",
+      "angle": 88,
+      "to": 154,
+      "hold": 0.505
+    },
+    {
+      "time": 107.664,
+      "ring": "R",
+      "center": true,
+      "angle": 154
+    },
+    {
+      "time": 108.785,
+      "ring": "L",
+      "angle": 130,
+      "hold": 0.785
+    },
+    {
+      "time": 109.346,
+      "ring": "R",
+      "angle": 102
+    },
+    {
+      "time": 109.907,
+      "ring": "L",
+      "angle": 72,
+      "to": 358,
+      "hold": 0.505
+    },
+    {
+      "time": 111.028,
+      "ring": "R",
+      "angle": 358
+    },
+    {
+      "time": 111.589,
+      "ring": "L",
+      "center": true,
+      "angle": 328
+    },
+    {
+      "time": 112.15,
+      "ring": "L",
+      "angle": 304,
+      "spin": 3,
+      "hold": 1.682,
+      "spinDir": 1
+    },
+    {
+      "time": 112.15,
+      "ring": "R",
+      "angle": 124,
+      "spin": 3,
+      "hold": 1.682,
+      "spinDir": -1
+    },
+    {
+      "time": 112.71,
+      "ring": "R",
+      "angle": 354
+    },
+    {
+      "time": 113.271,
+      "ring": "L",
+      "angle": 24,
+      "to": 105,
+      "hold": 0.505
+    },
+    {
+      "time": 114.393,
+      "ring": "R",
+      "angle": 105
+    },
+    {
+      "time": 114.953,
+      "ring": "L",
+      "angle": 135,
+      "to": 219,
+      "hold": 0.505
+    },
+    {
+      "time": 115.514,
+      "ring": "R",
+      "angle": 219
+    },
+    {
+      "time": 116.636,
+      "ring": "L",
+      "center": true,
+      "angle": 249
+    },
+    {
+      "time": 117.196,
+      "ring": "R",
+      "angle": 225
+    },
+    {
+      "time": 117.757,
+      "ring": "L",
+      "angle": 195,
+      "hold": 0.785
+    },
+    {
+      "time": 118.879,
+      "ring": "R",
+      "angle": 167,
+      "to": 101,
+      "hold": 0.505
+    },
+    {
+      "time": 119.439,
+      "ring": "L",
+      "angle": 101,
+      "mod": "L1"
+    },
+    {
+      "time": 120,
+      "ring": "R",
+      "angle": 71
+    },
+    {
+      "time": 121.121,
+      "ring": "L",
+      "angle": 41
+    },
+    {
+      "time": 121.682,
+      "ring": "R",
+      "angle": 71
+    },
+    {
+      "time": 122.243,
+      "ring": "L",
+      "angle": 101,
+      "to": 175,
+      "hold": 0.505
+    },
+    {
+      "time": 123.364,
+      "ring": "R",
+      "angle": 175,
+      "hold": 0.785
+    },
+    {
+      "time": 123.925,
+      "ring": "L",
+      "angle": 203
+    },
+    {
+      "time": 124.486,
+      "ring": "R",
+      "angle": 233,
+      "to": 304,
+      "hold": 0.505
+    },
+    {
+      "time": 125.607,
+      "ring": "L",
+      "angle": 304,
+      "spin": 3,
+      "hold": 1.402,
+      "spinDir": -1
+    },
+    {
+      "time": 126.729,
+      "ring": "R",
+      "angle": 254,
+      "hold": 0.785
+    },
+    {
+      "time": 127.29,
+      "ring": "L",
+      "angle": 226
+    },
+    {
+      "time": 127.85,
+      "ring": "R",
+      "angle": 196,
+      "to": 133,
+      "hold": 0.505
+    },
+    {
+      "time": 128.972,
+      "ring": "L",
+      "angle": 133
+    },
+    {
+      "time": 129.533,
+      "ring": "R",
+      "center": true,
+      "angle": 103
+    },
+    {
+      "time": 130.093,
+      "ring": "L",
+      "angle": 79,
+      "hold": 0.785
+    },
+    {
+      "time": 130.654,
+      "ring": "R",
+      "angle": 107
+    },
+    {
+      "time": 131.215,
+      "ring": "L",
+      "angle": 137,
+      "to": 203,
+      "hold": 0.505
+    },
+    {
+      "time": 132.336,
+      "ring": "R",
+      "angle": 203
+    },
+    {
+      "time": 132.897,
+      "ring": "L",
+      "angle": 233,
+      "to": 303,
+      "hold": 0.505
+    },
+    {
+      "time": 133.458,
+      "ring": "R",
+      "angle": 303
+    },
+    {
+      "time": 134.579,
+      "ring": "L",
+      "center": true,
+      "angle": 333
+    },
+    {
+      "time": 135.14,
+      "ring": "R",
+      "angle": 309
+    },
+    {
+      "time": 135.701,
+      "ring": "L",
+      "angle": 279,
+      "hold": 0.785
+    },
+    {
+      "time": 136.822,
+      "ring": "R",
+      "angle": 251,
+      "to": 180,
+      "hold": 0.505
+    },
+    {
+      "time": 137.383,
+      "ring": "L",
+      "angle": 180,
+      "mod": "L2"
+    },
+    {
+      "time": 137.944,
+      "ring": "R",
+      "angle": 150
+    },
+    {
+      "time": 139.065,
+      "ring": "L",
+      "angle": 120,
+      "spin": 3,
+      "hold": 1.682,
+      "spinDir": 1
+    },
+    {
+      "time": 139.065,
+      "ring": "R",
+      "angle": 300,
+      "spin": 3,
+      "hold": 1.682,
+      "spinDir": -1
+    },
+    {
+      "time": 139.626,
+      "ring": "L",
+      "angle": 170
+    },
+    {
+      "time": 140.187,
+      "ring": "R",
+      "angle": 200,
+      "to": 263,
+      "hold": 0.505
+    },
+    {
+      "time": 141.308,
+      "ring": "L",
+      "angle": 263,
+      "hold": 0.785
+    },
+    {
+      "time": 141.869,
+      "ring": "R",
+      "angle": 291
+    },
+    {
+      "time": 142.43,
+      "ring": "L",
+      "angle": 321,
+      "to": 46,
+      "hold": 0.505
+    },
+    {
+      "time": 143.551,
+      "ring": "R",
+      "center": true,
+      "angle": 46
+    },
+    {
+      "time": 144.673,
+      "ring": "L",
+      "angle": 22,
+      "hold": 0.785
+    },
+    {
+      "time": 145.234,
+      "ring": "R",
+      "angle": 354
+    },
+    {
+      "time": 145.794,
+      "ring": "L",
+      "angle": 324,
+      "to": 245,
+      "hold": 0.505
+    },
+    {
+      "time": 146.916,
+      "ring": "R",
+      "angle": 245
+    },
+    {
+      "time": 147.477,
+      "ring": "L",
+      "center": true,
+      "angle": 215
+    },
+    {
+      "time": 148.037,
+      "ring": "R",
+      "angle": 191,
+      "hold": 0.785
+    },
+    {
+      "time": 148.598,
+      "ring": "L",
+      "angle": 219
+    },
+    {
+      "time": 149.159,
+      "ring": "R",
+      "angle": 249,
+      "to": 320,
+      "hold": 0.505
+    },
+    {
+      "time": 150.28,
+      "ring": "L",
+      "angle": 320
+    },
+    {
+      "time": 150.841,
+      "ring": "R",
+      "angle": 350,
+      "to": 57,
+      "hold": 0.505
+    },
+    {
+      "time": 151.402,
+      "ring": "L",
+      "angle": 57
+    },
+    {
+      "time": 152.523,
+      "ring": "R",
+      "angle": 87,
+      "spin": 3,
+      "hold": 1.402,
+      "spinDir": -1
+    },
+    {
+      "time": 153.084,
+      "ring": "L",
+      "angle": 37
+    },
+    {
+      "time": 153.645,
+      "ring": "R",
+      "angle": 7,
+      "hold": 0.785
+    },
+    {
+      "time": 154.766,
+      "ring": "L",
+      "angle": 339,
+      "to": 254,
+      "hold": 0.505
+    },
+    {
+      "time": 155.327,
+      "ring": "R",
+      "angle": 254,
+      "mod": "L1"
+    },
+    {
+      "time": 155.888,
+      "ring": "L",
+      "angle": 224
+    },
+    {
+      "time": 157.009,
+      "ring": "R",
+      "angle": 194
+    },
+    {
+      "time": 157.57,
+      "ring": "L",
+      "angle": 224
+    },
+    {
+      "time": 158.131,
+      "ring": "R",
+      "angle": 254,
+      "to": 333,
+      "hold": 0.505
+    },
+    {
+      "time": 159.252,
+      "ring": "L",
+      "angle": 333,
+      "hold": 0.785
+    },
+    {
+      "time": 159.813,
+      "ring": "R",
+      "angle": 1
+    },
+    {
+      "time": 160.374,
+      "ring": "L",
+      "angle": 31,
+      "to": 121,
+      "hold": 0.505
+    },
+    {
+      "time": 161.495,
+      "ring": "R",
+      "center": true,
+      "angle": 121
+    },
+    {
+      "time": 162.617,
+      "ring": "L",
+      "angle": 97,
+      "hold": 0.785
+    },
+    {
+      "time": 163.178,
+      "ring": "R",
+      "angle": 69
+    },
+    {
+      "time": 163.738,
+      "ring": "L",
+      "angle": 39,
+      "to": 310,
+      "hold": 0.505
+    },
+    {
+      "time": 164.86,
+      "ring": "R",
+      "angle": 310
+    },
+    {
+      "time": 165.421,
+      "ring": "L",
+      "center": true,
+      "angle": 280
+    },
+    {
+      "time": 165.981,
+      "ring": "L",
+      "angle": 256,
+      "spin": 3,
+      "hold": 1.682,
+      "spinDir": 1
+    },
+    {
+      "time": 165.981,
+      "ring": "R",
+      "angle": 76,
+      "spin": 3,
+      "hold": 1.682,
+      "spinDir": -1
+    },
+    {
+      "time": 166.542,
+      "ring": "R",
+      "angle": 306
+    },
+    {
+      "time": 167.103,
+      "ring": "L",
+      "angle": 336,
+      "to": 61,
+      "hold": 0.505
+    },
+    {
+      "time": 168.224,
+      "ring": "R",
+      "angle": 61
+    },
+    {
+      "time": 168.785,
+      "ring": "L",
+      "angle": 91,
+      "to": 173,
+      "hold": 0.505
+    },
+    {
+      "time": 169.346,
+      "ring": "R",
+      "angle": 173
+    },
+    {
+      "time": 170.467,
+      "ring": "L",
+      "center": true,
+      "angle": 203
+    },
+    {
+      "time": 171.028,
+      "ring": "R",
+      "angle": 179
+    },
+    {
+      "time": 171.589,
+      "ring": "L",
+      "angle": 149,
+      "hold": 0.785
+    },
+    {
+      "time": 172.71,
+      "ring": "R",
+      "angle": 121,
+      "to": 31,
+      "hold": 0.505
+    },
+    {
+      "time": 173.271,
+      "ring": "L",
+      "angle": 31,
+      "mod": "L2"
+    },
+    {
+      "time": 173.832,
+      "ring": "R",
+      "angle": 1
+    },
+    {
+      "time": 174.953,
+      "ring": "L",
+      "angle": 331
+    },
+    {
+      "time": 175.514,
+      "ring": "R",
+      "angle": 1
+    },
+    {
+      "time": 176.075,
+      "ring": "L",
+      "angle": 31,
+      "to": 120,
+      "hold": 0.505
+    },
+    {
+      "time": 177.196,
+      "ring": "R",
+      "angle": 120,
+      "hold": 0.785
+    },
+    {
+      "time": 177.757,
+      "ring": "L",
+      "angle": 148
+    },
+    {
+      "time": 178.318,
+      "ring": "R",
+      "angle": 178,
+      "to": 264,
+      "hold": 0.505
+    },
+    {
+      "time": 179.439,
+      "ring": "L",
+      "angle": 264,
+      "spin": 3,
+      "hold": 1.402,
+      "spinDir": -1
+    },
+    {
+      "time": 180.561,
+      "ring": "R",
+      "angle": 214,
+      "hold": 0.785
+    },
+    {
+      "time": 181.121,
+      "ring": "L",
+      "angle": 186
+    },
+    {
+      "time": 181.682,
+      "ring": "R",
+      "angle": 156,
+      "to": 67,
+      "hold": 0.505
+    },
+    {
+      "time": 182.804,
+      "ring": "L",
+      "angle": 67
+    },
+    {
+      "time": 183.364,
+      "ring": "R",
+      "center": true,
+      "angle": 37
+    },
+    {
+      "time": 183.925,
+      "ring": "L",
+      "angle": 13,
+      "hold": 0.785
+    },
+    {
+      "time": 184.486,
+      "ring": "R",
+      "angle": 41
+    },
+    {
+      "time": 185.047,
+      "ring": "L",
+      "angle": 71,
+      "to": 161,
+      "hold": 0.505
+    },
+    {
+      "time": 186.168,
+      "ring": "R",
+      "angle": 161
+    },
+    {
+      "time": 186.729,
+      "ring": "L",
+      "angle": 191,
+      "to": 281,
+      "hold": 0.505
+    },
+    {
+      "time": 187.29,
+      "ring": "R",
+      "angle": 281
+    },
+    {
+      "time": 188.411,
+      "ring": "L",
+      "center": true,
+      "angle": 311
+    },
+    {
+      "time": 188.972,
+      "ring": "R",
+      "angle": 287
+    },
+    {
+      "time": 189.533,
+      "ring": "L",
+      "angle": 257,
+      "hold": 0.785
+    },
+    {
+      "time": 190.654,
+      "ring": "R",
+      "angle": 229,
+      "to": 144,
+      "hold": 0.505
+    },
+    {
+      "time": 191.215,
+      "ring": "L",
+      "angle": 144,
+      "mod": "L1"
+    },
+    {
+      "time": 191.776,
+      "ring": "R",
+      "angle": 114
+    },
+    {
+      "time": 192.897,
+      "ring": "L",
+      "angle": 84,
+      "spin": 3,
+      "hold": 1.682,
+      "spinDir": 1
+    },
+    {
+      "time": 192.897,
+      "ring": "R",
+      "angle": 264,
+      "spin": 3,
+      "hold": 1.682,
+      "spinDir": -1
+    },
+    {
+      "time": 193.458,
+      "ring": "L",
+      "angle": 134
+    },
+    {
+      "time": 194.019,
+      "ring": "R",
+      "angle": 164,
+      "to": 253,
+      "hold": 0.505
+    },
+    {
+      "time": 195.14,
+      "ring": "L",
+      "angle": 253,
+      "hold": 0.785
+    },
+    {
+      "time": 195.701,
+      "ring": "R",
+      "angle": 281
+    },
+    {
+      "time": 196.262,
+      "ring": "L",
+      "angle": 311,
+      "to": 24,
+      "hold": 0.505
+    },
+    {
+      "time": 197.383,
+      "ring": "R",
+      "center": true,
+      "angle": 24
+    },
+    {
+      "time": 198.505,
+      "ring": "L",
+      "angle": 0,
+      "hold": 0.785
+    },
+    {
+      "time": 199.065,
+      "ring": "R",
+      "angle": 332
+    },
+    {
+      "time": 199.626,
+      "ring": "L",
+      "angle": 302,
+      "to": 222,
+      "hold": 0.505
+    },
+    {
+      "time": 200.748,
+      "ring": "R",
+      "angle": 222
+    },
+    {
+      "time": 201.308,
+      "ring": "L",
+      "center": true,
+      "angle": 192
+    },
+    {
+      "time": 201.869,
+      "ring": "R",
+      "angle": 168,
+      "hold": 0.785
+    },
+    {
+      "time": 202.43,
+      "ring": "L",
+      "angle": 196
+    },
+    {
+      "time": 202.991,
+      "ring": "R",
+      "angle": 226,
+      "to": 311,
+      "hold": 0.505
+    },
+    {
+      "time": 204.112,
+      "ring": "L",
+      "angle": 311
+    },
+    {
+      "time": 204.673,
+      "ring": "R",
+      "angle": 341,
+      "to": 68,
+      "hold": 0.505
+    },
+    {
+      "time": 205.234,
+      "ring": "L",
+      "angle": 68
+    },
+    {
+      "time": 206.355,
+      "ring": "R",
+      "angle": 98,
+      "spin": 3,
+      "hold": 1.402,
+      "spinDir": -1
+    },
+    {
+      "time": 206.916,
+      "ring": "L",
+      "angle": 48
+    },
+    {
+      "time": 207.477,
+      "ring": "R",
+      "angle": 18,
+      "hold": 0.785
+    },
+    {
+      "time": 208.598,
+      "ring": "L",
+      "angle": 350,
+      "to": 278,
+      "hold": 0.505
+    },
+    {
+      "time": 209.159,
+      "ring": "R",
+      "angle": 278,
+      "mod": "L2"
+    },
+    {
+      "time": 209.72,
+      "ring": "L",
+      "angle": 248
+    },
+    {
+      "time": 210.841,
+      "ring": "R",
+      "angle": 218
+    },
+    {
+      "time": 211.402,
+      "ring": "L",
+      "angle": 248
+    },
+    {
+      "time": 211.963,
+      "ring": "R",
+      "angle": 278,
+      "to": 358,
+      "hold": 0.505
+    },
+    {
+      "time": 213.084,
+      "ring": "L",
+      "angle": 358,
+      "hold": 0.785
+    },
+    {
+      "time": 213.645,
+      "ring": "R",
+      "angle": 26
+    },
+    {
+      "time": 214.206,
+      "ring": "L",
+      "angle": 56,
+      "to": 120,
+      "hold": 0.505
+    },
+    {
+      "time": 215.327,
+      "ring": "R",
+      "center": true,
+      "angle": 120
+    },
+    {
+      "time": 216.449,
+      "ring": "L",
+      "angle": 96,
+      "hold": 0.785
+    },
+    {
+      "time": 217.009,
+      "ring": "R",
+      "angle": 68
+    },
+    {
+      "time": 217.57,
+      "ring": "L",
+      "angle": 38,
+      "to": 334,
+      "hold": 0.505
+    },
+    {
+      "time": 218.692,
+      "ring": "R",
+      "angle": 334
+    },
+    {
+      "time": 219.252,
+      "ring": "L",
+      "center": true,
+      "angle": 304
+    },
+    {
+      "time": 219.813,
+      "ring": "L",
+      "angle": 280,
+      "spin": 3,
+      "hold": 1.682,
+      "spinDir": 1
+    },
+    {
+      "time": 219.813,
+      "ring": "R",
+      "angle": 100,
+      "spin": 3,
+      "hold": 1.682,
+      "spinDir": -1
+    },
+    {
+      "time": 220.374,
+      "ring": "R",
+      "angle": 330
+    },
+    {
+      "time": 220.935,
+      "ring": "L",
+      "angle": 0,
+      "to": 72,
+      "hold": 0.505
+    },
+    {
+      "time": 222.056,
+      "ring": "R",
+      "angle": 72
+    },
+    {
+      "time": 222.617,
+      "ring": "L",
+      "angle": 102,
+      "to": 178,
+      "hold": 0.505
+    },
+    {
+      "time": 223.178,
+      "ring": "R",
+      "angle": 178
+    },
+    {
+      "time": 224.299,
+      "ring": "L",
+      "center": true,
+      "angle": 208
+    },
+    {
+      "time": 224.86,
+      "ring": "R",
+      "angle": 184
+    },
+    {
+      "time": 225.421,
+      "ring": "L",
+      "angle": 154,
+      "hold": 0.785
+    },
+    {
+      "time": 226.542,
+      "ring": "R",
+      "angle": 126,
+      "to": 61,
+      "hold": 0.505
+    },
+    {
+      "time": 227.103,
+      "ring": "L",
+      "angle": 61,
+      "mod": "L1"
+    },
+    {
+      "time": 227.664,
+      "ring": "R",
+      "angle": 31
+    },
+    {
+      "time": 228.785,
+      "ring": "L",
+      "angle": 1
+    },
+    {
+      "time": 229.346,
+      "ring": "R",
+      "angle": 31
+    },
+    {
+      "time": 229.907,
+      "ring": "L",
+      "angle": 61,
+      "to": 125,
+      "hold": 0.505
+    },
+    {
+      "time": 231.028,
+      "ring": "R",
+      "angle": 125,
+      "hold": 0.785
+    },
+    {
+      "time": 231.589,
+      "ring": "L",
+      "angle": 153
+    },
+    {
+      "time": 232.15,
+      "ring": "R",
+      "angle": 183,
+      "to": 263,
+      "hold": 0.505
+    },
+    {
+      "time": 233.271,
+      "ring": "L",
+      "angle": 263,
+      "spin": 3,
+      "hold": 1.402,
+      "spinDir": -1
+    },
+    {
+      "time": 234.393,
+      "ring": "R",
+      "angle": 213,
+      "hold": 0.785
+    },
+    {
+      "time": 234.953,
+      "ring": "L",
+      "angle": 185
+    },
+    {
+      "time": 235.514,
+      "ring": "R",
+      "angle": 155,
+      "to": 82,
+      "hold": 0.505
+    },
+    {
+      "time": 236.636,
+      "ring": "L",
+      "angle": 82
+    },
+    {
+      "time": 237.196,
+      "ring": "R",
+      "center": true,
+      "angle": 52
+    },
+    {
+      "time": 237.757,
+      "ring": "L",
+      "angle": 28,
+      "hold": 0.785
+    },
+    {
+      "time": 238.318,
+      "ring": "R",
+      "angle": 56
+    },
+    {
+      "time": 238.879,
+      "ring": "L",
+      "angle": 86,
+      "to": 151,
+      "hold": 0.505
+    },
+    {
+      "time": 240,
+      "ring": "R",
+      "angle": 151
+    },
+    {
+      "time": 240.561,
+      "ring": "L",
+      "angle": 181,
+      "to": 242,
+      "hold": 0.505
+    },
+    {
+      "time": 241.121,
+      "ring": "R",
+      "angle": 242
+    },
+    {
+      "time": 242.243,
+      "ring": "L",
+      "center": true,
+      "angle": 272
+    },
+    {
+      "time": 242.804,
+      "ring": "R",
+      "angle": 248
+    },
+    {
+      "time": 243.364,
+      "ring": "L",
+      "angle": 218,
+      "hold": 0.785
+    },
+    {
+      "time": 244.486,
+      "ring": "R",
+      "angle": 190,
+      "to": 110,
+      "hold": 0.505
+    },
+    {
+      "time": 245.047,
+      "ring": "L",
+      "angle": 110,
+      "mod": "L2"
+    },
+    {
+      "time": 245.607,
+      "ring": "R",
+      "angle": 80
+    },
+    {
+      "time": 246.729,
+      "ring": "L",
+      "angle": 50,
+      "spin": 3,
+      "hold": 1.682,
+      "spinDir": 1
+    },
+    {
+      "time": 246.729,
+      "ring": "R",
+      "angle": 230,
+      "spin": 3,
+      "hold": 1.682,
+      "spinDir": -1
+    },
+    {
+      "time": 247.29,
+      "ring": "L",
+      "angle": 100
+    },
+    {
+      "time": 247.85,
+      "ring": "R",
+      "angle": 130,
+      "to": 203,
+      "hold": 0.505
+    },
+    {
+      "time": 248.972,
+      "ring": "L",
+      "angle": 203,
+      "hold": 0.785
+    },
+    {
+      "time": 249.533,
+      "ring": "R",
+      "angle": 231
+    },
+    {
+      "time": 250.093,
+      "ring": "L",
+      "angle": 261,
+      "to": 350,
+      "hold": 0.505
+    },
+    {
+      "time": 251.215,
+      "ring": "R",
+      "center": true,
+      "angle": 350
+    },
+    {
+      "time": 252.336,
+      "ring": "L",
+      "angle": 326,
+      "hold": 0.785
+    },
+    {
+      "time": 252.897,
+      "ring": "R",
+      "angle": 298
+    },
+    {
+      "time": 253.458,
+      "ring": "L",
+      "angle": 268,
+      "to": 182,
+      "hold": 0.505
+    },
+    {
+      "time": 254.579,
+      "ring": "R",
+      "angle": 182
+    },
+    {
+      "time": 255.14,
+      "ring": "L",
+      "center": true,
+      "angle": 152
+    },
+    {
+      "time": 255.701,
+      "ring": "R",
+      "angle": 128,
+      "hold": 0.785
+    },
+    {
+      "time": 256.262,
+      "ring": "L",
+      "angle": 156
+    },
+    {
+      "time": 256.822,
+      "ring": "R",
+      "angle": 186,
+      "to": 266,
+      "hold": 0.505
+    },
+    {
+      "time": 257.944,
+      "ring": "L",
+      "angle": 266
+    },
+    {
+      "time": 258.505,
+      "ring": "R",
+      "angle": 296,
+      "to": 13,
+      "hold": 0.505
+    },
+    {
+      "time": 259.065,
+      "ring": "L",
+      "angle": 13
+    },
+    {
+      "time": 260.187,
+      "ring": "R",
+      "angle": 43,
+      "spin": 3,
+      "hold": 1.402,
+      "spinDir": -1
+    },
+    {
+      "time": 260.748,
+      "ring": "L",
+      "angle": 353
+    },
+    {
+      "time": 261.308,
+      "ring": "R",
+      "angle": 323,
+      "hold": 0.785
+    },
+    {
+      "time": 262.43,
+      "ring": "L",
+      "angle": 295,
+      "to": 206,
+      "hold": 0.505
+    },
+    {
+      "time": 262.991,
+      "ring": "R",
+      "angle": 206,
+      "mod": "L1"
+    },
+    {
+      "time": 263.551,
+      "ring": "L",
+      "angle": 176
+    },
+    {
+      "time": 264.673,
+      "ring": "R",
+      "angle": 146
+    },
+    {
+      "time": 265.234,
+      "ring": "L",
+      "angle": 176
+    },
+    {
+      "time": 265.794,
+      "ring": "R",
+      "angle": 206,
+      "to": 292,
+      "hold": 0.505
+    },
+    {
+      "time": 266.916,
+      "ring": "L",
+      "angle": 292,
+      "hold": 0.785
+    },
+    {
+      "time": 267.477,
+      "ring": "R",
+      "angle": 320
+    },
+    {
+      "time": 268.037,
+      "ring": "L",
+      "angle": 350,
+      "to": 78,
+      "hold": 0.505
+    },
+    {
+      "time": 269.159,
+      "ring": "R",
+      "center": true,
+      "angle": 78
+    },
+    {
+      "time": 270.28,
+      "ring": "L",
+      "angle": 54,
+      "hold": 0.785
+    },
+    {
+      "time": 270.841,
+      "ring": "R",
+      "angle": 26
+    },
+    {
+      "time": 271.402,
+      "ring": "L",
+      "angle": 356,
+      "to": 266,
+      "hold": 0.505
+    },
+    {
+      "time": 272.523,
+      "ring": "R",
+      "angle": 266
+    },
+    {
+      "time": 273.084,
+      "ring": "L",
+      "center": true,
+      "angle": 236
+    },
+    {
+      "time": 273.645,
+      "ring": "L",
+      "angle": 212,
+      "spin": 3,
+      "hold": 1.682,
+      "spinDir": 1
+    },
+    {
+      "time": 273.645,
+      "ring": "R",
+      "angle": 32,
+      "spin": 3,
+      "hold": 1.682,
+      "spinDir": -1
+    },
+    {
+      "time": 274.206,
+      "ring": "R",
+      "angle": 262
+    },
+    {
+      "time": 274.766,
+      "ring": "L",
+      "angle": 292,
+      "to": 21,
+      "hold": 0.505
+    },
+    {
+      "time": 275.888,
+      "ring": "R",
+      "angle": 21
+    },
+    {
+      "time": 276.449,
+      "ring": "L",
+      "angle": 51,
+      "to": 139,
+      "hold": 0.505
+    },
+    {
+      "time": 277.009,
+      "ring": "R",
+      "angle": 139
+    },
+    {
+      "time": 278.131,
+      "ring": "L",
+      "center": true,
+      "angle": 169
+    },
+    {
+      "time": 278.692,
+      "ring": "R",
+      "angle": 145
+    },
+    {
+      "time": 279.252,
+      "ring": "L",
+      "angle": 115,
+      "hold": 0.785
+    },
+    {
+      "time": 280.374,
+      "ring": "R",
+      "angle": 87,
+      "to": 359,
+      "hold": 0.505
+    },
+    {
+      "time": 280.935,
+      "ring": "L",
+      "angle": 359,
+      "mod": "L2"
+    },
+    {
+      "time": 281.495,
+      "ring": "R",
+      "angle": 329
+    },
+    {
+      "time": 282.617,
+      "ring": "L",
+      "angle": 299
+    },
+    {
+      "time": 283.178,
+      "ring": "R",
+      "angle": 329
+    },
+    {
+      "time": 283.738,
+      "ring": "L",
+      "angle": 359,
+      "to": 89,
+      "hold": 0.505
+    },
+    {
+      "time": 284.86,
+      "ring": "R",
+      "angle": 89,
+      "hold": 0.785
+    },
+    {
+      "time": 285.421,
+      "ring": "L",
+      "angle": 117
+    },
+    {
+      "time": 285.981,
+      "ring": "R",
+      "angle": 147,
+      "to": 225,
+      "hold": 0.505
+    },
+    {
+      "time": 287.103,
+      "ring": "L",
+      "angle": 225,
+      "spin": 3,
+      "hold": 1.402,
+      "spinDir": -1
+    },
+    {
+      "time": 288.224,
+      "ring": "R",
+      "angle": 175,
+      "hold": 0.785
+    },
+    {
+      "time": 288.785,
+      "ring": "L",
+      "angle": 147
+    },
+    {
+      "time": 289.346,
+      "ring": "R",
+      "angle": 117,
+      "to": 33,
+      "hold": 0.505
+    },
+    {
+      "time": 290.467,
+      "ring": "L",
+      "angle": 33
+    },
+    {
+      "time": 291.028,
+      "ring": "R",
+      "center": true,
+      "angle": 3
+    },
+    {
+      "time": 291.589,
+      "ring": "L",
+      "angle": 339,
+      "hold": 0.785
+    },
+    {
+      "time": 292.15,
+      "ring": "R",
+      "angle": 7
+    },
+    {
+      "time": 292.71,
+      "ring": "L",
+      "angle": 37,
+      "to": 125,
+      "hold": 0.505
+    },
+    {
+      "time": 293.832,
+      "ring": "R",
+      "angle": 125
+    },
+    {
+      "time": 294.393,
+      "ring": "L",
+      "angle": 155,
+      "to": 244,
+      "hold": 0.505
+    },
+    {
+      "time": 294.953,
+      "ring": "R",
+      "angle": 244
+    },
+    {
+      "time": 296.075,
+      "ring": "L",
+      "center": true,
+      "angle": 274
+    },
+    {
+      "time": 296.636,
+      "ring": "R",
+      "angle": 250
+    },
+    {
+      "time": 297.196,
+      "ring": "L",
+      "angle": 220,
+      "hold": 0.785
+    },
+    {
+      "time": 298.318,
+      "ring": "R",
+      "angle": 192,
+      "to": 114,
+      "hold": 0.505
+    },
+    {
+      "time": 298.879,
+      "ring": "L",
+      "angle": 114,
+      "mod": "L1"
+    },
+    {
+      "time": 299.439,
+      "ring": "R",
+      "angle": 84
+    }
+  ]
+}

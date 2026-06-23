@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EYEBALLS — optical dual-stick rhythm</title>
+  <link rel="stylesheet" href="styles.css" />
+  <!-- Three.js (3D eyeballs) — build-free ES modules from a CDN -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <!-- Boot gate: a real click/keypress is REQUIRED to unlock browser audio. -->
+  <div id="boot">
+    <div class="boot-inner">
+      <div class="boot-eye">👁</div>
+      <div class="boot-cta">CLICK to open your eyes</div>
+      <div class="boot-sub">then connect a controller &amp; press a button</div>
+    </div>
+  </div>
+
+  <!-- 3D eyeballs (Three.js / eyes3d.js) sit BEHIND the 2D laser+HUD overlay -->
+  <canvas id="eyes3d"></canvas>
+  <!-- Transparent 2D overlay: lasers (notes), FX, HUD (render.js) -->
+  <canvas id="stage"></canvas>
+  <!-- LCD scanline overlay for the acid/CRT feel -->
+  <div id="scanlines"></div>
+
+  <!-- Minimal in-game HUD -->
+  <div id="hud" class="hidden">
+    <div class="hud-top">
+      <span id="hud-score">0000000</span>
+      <span id="hud-acc">100.0%</span>
+    </div>
+    <div id="hud-combo"></div>
+    <div id="judge"></div>
+    <div id="countin"></div>
+    <div id="demo-badge" class="hidden">▶ DEMO · auto-play — Back/Esc to exit</div>
+    <div id="audio-src"></div>
+  </div>
+
+  <button id="btn-pause-float" class="hidden" title="Pause (Options / Esc)">⏸</button>
+  <div id="error" class="hidden"></div>
+
+  <!-- ============ TITLE ============ -->
+  <section id="title" class="screen">
+    <h1 class="eye-title">
+      <span class="eye-main">EYE<span class="o">👁</span>BALLS</span>
+      <span class="eye-sub">OPTICAL OVERLOAD · an inverted-wakka rhythm trip</span>
+    </h1>
+    <p id="title-status" class="status">…</p>
+    <p class="splash-hint">Move the sticks — the eyes are your <b>pupils</b>, looking out at the lasers. Centre the sticks and they stare right back at you.</p>
+
+    <div id="start-prompt">PULL <b>L2 + R2</b> TO STARE</div>
+    <div class="row ghost-row">
+      <button id="btn-start">browse songs</button>
+      <button id="btn-demo">▶ watch demo</button>
+      <button id="btn-leaderboard">🏆 leaderboard</button>
+      <button id="btn-settings">⚙ settings</button>
+    </div>
+  </section>
+
+  <!-- ============ SONG SELECT ============ -->
+  <section id="songselect" class="screen hidden">
+    <h2>CHOOSE A TRIP</h2>
+    <div id="diff-select" class="diff-row" role="group" aria-label="Difficulty">
+      <span class="diff-label">DIFFICULTY</span>
+      <button class="diff-btn" data-diff="easy">Easy</button>
+      <button class="diff-btn" data-diff="normal">Normal</button>
+      <button class="diff-btn" data-diff="hard">Hard</button>
+    </div>
+    <div id="song-list" class="list"></div>
+    <div class="row">
+      <button id="btn-custom">＋ Load custom track</button>
+      <button id="btn-songs-back" data-back>← Back</button>
+    </div>
+    <div id="bundled-audio" class="byo">
+      <label>Built-in songs ship <small>without audio (copyright)</small> — pick the matching local file to hear the real track:
+        <input id="bundled-audio-input" type="file" accept="audio/*" />
+      </label>
+      <p id="bundled-audio-status" class="status"></p>
+    </div>
+    <p class="hint">No file? Built-in charts still play in full on a <b>synth groove</b> locked to the BPM. Your audio stays in your browser — nothing is uploaded.</p>
+  </section>
+
+  <!-- ============ CUSTOM ============ -->
+  <section id="custom" class="screen hidden">
+    <h2>CUSTOM TRACK</h2>
+    <div class="form">
+      <label>Audio file <small>(.mp3 / .ogg / .wav)</small>
+        <input id="audio-input" type="file" accept="audio/*" />
+      </label>
+      <label>Beatmap <small>(.json — optional)</small>
+        <input id="beatmap-input" type="file" accept="application/json,.json" />
+      </label>
+      <p id="custom-status" class="status">Pick an audio file. Add a beatmap, or auto-chart it.</p>
+      <div class="row">
+        <button id="btn-play-custom">▸ Play with beatmap</button>
+        <button id="btn-autochart">✨ Auto-chart &amp; play</button>
+      </div>
+      <div class="row">
+        <button id="btn-download" class="hidden">⬇ Download generated chart</button>
+        <button id="btn-custom-back" data-back>← Back</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SETTINGS ============ -->
+  <section id="settings" class="screen hidden">
+    <h2>SETTINGS</h2>
+    <div class="settings-form">
+      <div class="set-row">
+        <label for="set-music">Music volume</label>
+        <input id="set-music" type="range" min="0" max="100" step="1" value="90" />
+        <span class="set-val" id="set-music-val">90%</span>
+      </div>
+      <div class="set-row">
+        <label for="set-sfx">SFX volume</label>
+        <input id="set-sfx" type="range" min="0" max="100" step="1" value="50" />
+        <span class="set-val" id="set-sfx-val">50%</span>
+      </div>
+      <div class="set-row">
+        <label for="set-offset">Audio offset <small>(notes early ↔ late)</small></label>
+        <input id="set-offset" type="range" min="-150" max="150" step="5" value="0" />
+        <span class="set-val" id="set-offset-val">0 ms</span>
+      </div>
+      <div class="set-row">
+        <label for="set-speed">Note speed <small>(approach time)</small></label>
+        <input id="set-speed" type="range" min="100" max="320" step="10" value="180" />
+        <span class="set-val" id="set-speed-val">1.8 s</span>
+      </div>
+      <div class="set-row">
+        <label for="set-haptics">Controller rumble <small>(haptic hit feedback)</small></label>
+        <input id="set-haptics" type="range" min="0" max="100" step="5" value="80" />
+        <span class="set-val" id="set-haptics-val">80%</span>
+      </div>
+      <p class="hint">Use the <b>D-pad ↑↓</b> to pick a setting and <b>←→</b> to adjust (or drag with the mouse). Saved automatically.</p>
+      <div class="row">
+        <button id="btn-settings-reset">↺ Reset defaults</button>
+        <button id="btn-settings-back" data-back>← Back</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RESULTS ============ -->
+  <section id="results" class="screen hidden">
+    <h2>RESULTS</h2>
+    <div id="res-grade" class="grade">—</div>
+    <div class="res-stats">
+      <div><label>SCORE</label><span id="res-score">0000000</span></div>
+      <div><label>MAX COMBO</label><span id="res-combo">0x</span></div>
+      <div><label>ACCURACY</label><span id="res-acc">0%</span></div>
+    </div>
+    <div id="res-counts" class="counts"></div>
+    <div id="res-newbest" class="newbest hidden">★ NEW BEST ★</div>
+    <div id="res-leaderboard" class="lb-list"></div>
+    <div class="row">
+      <button id="btn-results-again">↻ Play again</button>
+      <button id="btn-results-back" data-back>← Tracks</button>
+    </div>
+  </section>
+
+  <!-- ============ LEADERBOARD ============ -->
+  <section id="leaderboard" class="screen hidden">
+    <h2>🏆 LEADERBOARD</h2>
+    <div id="lb-song" class="lb-song"></div>
+    <div id="lb-list" class="lb-list"></div>
+    <div class="row">
+      <button id="btn-lb-clear">✕ Clear scores</button>
+      <button id="btn-lb-back" data-back>← Back</button>
+    </div>
+  </section>
+
+  <!-- ============ PAUSE ============ -->
+  <section id="pause" class="screen hidden">
+    <h2>PAUSED</h2>
+    <div class="row col">
+      <button id="btn-resume">▸ Resume</button>
+      <button id="btn-restart">↻ Restart</button>
+      <button id="btn-quit">✕ Quit to tracks</button>
+    </div>
+  </section>
+
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
