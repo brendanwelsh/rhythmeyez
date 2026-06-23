@@ -107,9 +107,23 @@ export class Eyes2D {
     ctx.save();
     ctx.beginPath(); ctx.arc(e.x, e.y, e.r * 0.97, 0, Math.PI * 2); ctx.clip();
     const cx = e.x + st.px, cy = e.y + st.py, pop = 1 + st.chomp * 0.15;
-    ctx.translate(cx, cy); ctx.rotate(st.roll); ctx.scale(pop, pop);
+    // foreshorten the iris along the radial axis so it WRAPS onto the eyeball's curve (looks like
+    // one attached piece, not a flat disc sliding on top) — squashed more the further it looks.
+    const dist = Math.hypot(st.px, st.py);
+    const fs = Math.sqrt(Math.max(0.25, 1 - (dist / e.r) ** 2));
+    const ra = Math.atan2(st.py, st.px);
+    ctx.translate(cx, cy);
+    ctx.rotate(ra); ctx.scale(fs, 1); ctx.rotate(-ra);
+    ctx.rotate(st.roll); ctx.scale(pop, pop);
     if (iris) ctx.drawImage(iris, -e.r, -e.r, D, D);                       // iris (~0.4·D, centred on cursor)
     if (this.pupilImg._ready) { ctx.save(); ctx.scale(this.pupilScale, this.pupilScale); ctx.drawImage(this.pupilImg, -e.r, -e.r, D, D); ctx.restore(); }
+    ctx.restore();
+    // re-shade the iris with the globe's own lighting (multiply) so it picks up the eye's highlights
+    // + shadow instead of looking pasted on — clipped to the iris footprint.
+    ctx.save();
+    ctx.beginPath(); ctx.arc(cx, cy, e.r * 0.42 * pop, 0, Math.PI * 2); ctx.clip();
+    ctx.globalAlpha = 0.35; ctx.globalCompositeOperation = 'multiply';
+    ctx.drawImage(this.globe, e.x - e.r, e.y - e.r, D, D);
     ctx.restore();
     // a small glossy catch-light so the eye reads wet
     ctx.save(); ctx.globalAlpha = 0.5; ctx.fillStyle = '#ffffff';
