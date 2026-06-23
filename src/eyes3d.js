@@ -197,7 +197,18 @@ export class EyeStage {
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const w = window.innerWidth, h = window.innerHeight;
     this.renderer.setPixelRatio(dpr); this.renderer.setSize(w, h, false);
-    this.camera.aspect = w / h; this.camera.updateProjectionMatrix();
+    const aspect = w / h;
+    this.camera.aspect = aspect;
+    // FIT both eyes to ANY window/aspect: pull the camera to whatever distance keeps the eye pair
+    // on-screen horizontally AND vertically (with margin). Narrow/small windows → camera backs off
+    // so the eyes shrink to fit instead of spilling off the sides.
+    const halfTan = Math.tan((42 * Math.PI / 180) / 2);
+    const needX = EYE_X + EYE_R * 1.5;        // horizontal half-extent to keep visible
+    const needY = EYE_R * 1.7;                // vertical half-extent
+    const dForX = needX / (halfTan * Math.max(0.0001, aspect));
+    const dForY = needY / halfTan;
+    this.camera.position.z = Math.max(dForX, dForY) * 1.06;
+    this.camera.updateProjectionMatrix();
     this.w = w; this.h = h;
   }
 
