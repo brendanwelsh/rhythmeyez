@@ -49,12 +49,15 @@ export class Eyes2D {
 
   resize() {
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const w = window.innerWidth, h = window.innerHeight;
+    // Use the canvas's OWN client size (same basis the note overlay uses) — NOT window.innerWidth —
+    // so the eyes and the notes share one coordinate space and stay aligned on mobile (where the
+    // dynamic address bar makes innerHeight differ from 100vh) and at any DPR.
+    const w = this.canvas.clientWidth || window.innerWidth, h = this.canvas.clientHeight || window.innerHeight;
     this.canvas.width = Math.round(w * dpr); this.canvas.height = Math.round(h * dpr);
     this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     this.w = w; this.h = h;
-    const r = Math.max(40, Math.min(w * 0.16, h * 0.26));   // eye radius — scales to the window
-    const off = Math.min(w * 0.5 - r - 8, r * 1.7);          // half the gap between the two eyes
+    const r = Math.max(36, Math.min(w * 0.15, h * 0.24));   // eye radius — scales to the window
+    const off = Math.min(w * 0.5 - r - 6, r * 1.7);          // half the gap between the two eyes
     const cy = h * 0.5;
     this.screen = { L: { x: w / 2 - off, y: cy, r }, R: { x: w / 2 + off, y: cy, r } };
   }

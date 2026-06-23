@@ -559,7 +559,7 @@ class Game {
     else a = noteTargetAngle(best, songTime);                    // park / trace the (moving) target
     const v = angleVec(a);
     // full deflection inside the window, easing in as the note approaches
-    const mag = bestDist <= 0.16 ? 0.94 : Math.max(0.3, 0.94 - (bestDist - 0.16) * 1.1);
+    const mag = bestDist <= 0.16 ? 1.0 : Math.max(0.3, 1.0 - (bestDist - 0.16) * 1.1);  // reach FULLY onto the note
     return { x: v.x, y: v.y, mag, mod: bestDist <= 0.2 ? best.mod : null };
   }
 
