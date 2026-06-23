@@ -15,6 +15,7 @@ import { noteTargetAngle, wrapPi } from './chart.js';
 export const WINDOWS = { perfect: 0.05, good: 0.13 };  // tap timing windows (± seconds)
 const SCORE = { perfect: 300, good: 100, miss: 0 };
 const HOLD_BONUS = 150;                 // bonus for clearing a sustained note
+const CENTER_BONUS = 250;               // extra payoff for nailing a CENTER rest (reward letting go)
 const SUSTAIN_RATE = 220;               // points/second while satisfying a hold/slide/spin
 const FOCUS_RATE = 240;                 // bonus points/second while BOTH eyes are on-target (FOCUS)
 
@@ -89,6 +90,8 @@ export class Scorer {
       this.maxCombo = Math.max(this.maxCombo, this.combo);
       this.score += Math.round(SCORE[judgement] * this._comboMultiplier());
       if (note.hold > 0) this.score += HOLD_BONUS;
+      if (note.type === 'center') this.score += CENTER_BONUS;   // reward going back to neutral
+
     }
     this.events.push({ judgement, ring: note.ring, dir: note.dir, angle: noteTargetAngle(note, songTime), t: songTime });
   }
