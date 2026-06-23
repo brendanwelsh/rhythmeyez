@@ -44,6 +44,8 @@ const COLVAR = {
   L: { tap: '#00f0ff', hold: '#2f6bff', slide: '#00b3ff', spin: '#7a4dff', center: '#aef6ff' },
   R: { tap: '#ff2bd6', hold: '#ff4d7a', slide: '#ff66c4', spin: '#c94dff', center: '#ffc2ec' },
 };
+const HIT_FRAC = 0.5;   // notes LAND where the pupil reaches (½ the eye radius), not at the rim — so
+                        // the eye looking at the note and the note's landing spot are the same point.
 
 export class Renderer {
   constructor(canvas) {
@@ -207,18 +209,45 @@ export class Renderer {
   // --- geometry helpers (names preserved) ---------------------------------
   // A point on the eye's rim for a given heading; `frac` scales the radius.
   _rimPt(eye, a, frac = 1) { const v = angleVec(a); return { x: eye.x + v.x * eye.r * frac, y: eye.y + v.y * eye.r * frac }; }
-  // The incoming note head; p 0→1 as it approaches. Comes from FAR out (≈half the screen) so you
-  // read it well before it lands, and at EVERY heading (incl. the four diagonals) without colliding
-  // with the centred face — independent of how small the eye is on screen.
+  // The incoming note head; p 0→1 as it approaches. Comes from FAR out so you read it early, and
+  // LANDS at the hit-point (HIT_FRAC·r) — exactly where the pupil can reach.
   _runwayPt(eye, a, p) {
     const v = angleVec(a);
     const far = Math.min(this.w, this.h) * 0.5;
-    const d = eye.r + far * (1 - p);
+    const d = eye.r * HIT_FRAC + far * (1 - p);
     return { x: eye.x + v.x * d, y: eye.y + v.y * d };
   }
+  // The landing point for a note at heading `a` — where the pupil meets it.
+  _hitPt(eye, a, frac = HIT_FRAC) { const v = angleVec(a); return { x: eye.x + v.x * eye.r * frac, y: eye.y + v.y * eye.r * frac }; }
 
   // Colour for a note: its side's family (blue L / pink R), varied by type.
   _noteCol(ring, type) { return (COLVAR[ring] && COLVAR[ring][type]) || ringColor(ring); }
+
+  // A premium glowing ORB: white-hot core → colour halo → transparent, drawn additively. The base
+  // shape for every note (no flat MS-Paint arrowheads).
+  _orb(x, y, r, col, lit, alpha = 1) {
+    const { ctx } = this;
+    const hex = lit ? '#ffffff' : col;
+    const n = parseInt(hex.slice(1), 16), rgb = `${(n >> 16) & 255},${(n >> 8) & 255},${n & 255}`;
+    const g = ctx.createRadialGradient(x, y, 0, x, y, Math.max(1, r));
+    g.addColorStop(0, `rgba(255,255,255,${0.95 * alpha})`);
+    g.addColorStop(0.32, `rgba(${rgb},${0.92 * alpha})`);
+    g.addColorStop(1, `rgba(${rgb},0)`);
+    ctx.save(); ctx.globalCompositeOperation = 'lighter';
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  }
+
+  // The landing TARGET: a clean thin glowing ring at the hit-point, showing where to bring the pupil.
+  _hitRing(eye, a, col, lit, p, rr) {
+    const { ctx } = this; const hp = this._hitPt(eye, a);
+    ctx.save(); ctx.lineCap = 'round';
+    ctx.shadowColor = lit ? '#ffffff' : col; ctx.shadowBlur = lit ? 16 : 7;
+    ctx.strokeStyle = this._alpha(lit ? '#ffffff' : col, (lit ? 1 : 0.45) * Math.min(1, p * 2));
+    ctx.lineWidth = eye.r * 0.028;
+    ctx.beginPath(); ctx.arc(hp.x, hp.y, rr, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
+    return hp;
+  }
 
   // Glowing arc segment on the rim, centred on `a` spanning ±span. `lit` flares it white.
   _rimArc(eye, a, span, col, alpha, width, lit) {
@@ -247,24 +276,6 @@ export class Renderer {
     ctx.restore();
   }
 
-  // A filled chevron / arrowhead pointing along heading `a` at point p, size s. The "flick" glyph.
-  _chevron(p, a, s, col, lit, alpha = 1) {
-    const { ctx } = this;
-    const bright = lit ? '#ffffff' : col;
-    ctx.save();
-    ctx.translate(p.x, p.y); ctx.rotate(a);
-    ctx.shadowColor = bright; ctx.shadowBlur = lit ? 20 : 12;
-    ctx.fillStyle = this._alpha(bright, alpha);
-    // a sharp arrowhead opening backward (tip leads, toward +x = heading)
-    ctx.beginPath();
-    ctx.moveTo(s, 0);
-    ctx.lineTo(-s * 0.7, -s * 0.85);
-    ctx.lineTo(-s * 0.25, 0);
-    ctx.lineTo(-s * 0.7, s * 0.85);
-    ctx.closePath(); ctx.fill();
-    ctx.restore();
-  }
-
   // Notes draw per TYPE with DISTINCT icons converging on the eye. Nothing is a discrete press — you're scored
   // for BEING in the arc / TRACING the line / SPINNING / CENTRING, so the visuals show a target to
   // ride into and flare white (n.lit) while your stick is satisfying them.
@@ -285,90 +296,73 @@ export class Renderer {
     }
   }
 
-  // TAP — a FLICK: a sharp thin CHEVRON / arrowhead bolt streaking inward toward the rim at n.angle,
-  // with a tiny thin streak tail. Snappy and light (deliberately the opposite of the fat HOLD beam).
-  // A faint bite-arc marks the rim landing zone; everything pulses brighter as it approaches.
-  _noteTap(eye, n, songTime, p, dt, arcScale = 1) {
+  // FLICK (tap) — a sleek comet of light: a glowing ORB streaks in along the heading with a soft
+  // tapered trail and lands on the hit-ring. Quick and light. The ring shows exactly where the pupil
+  // must be as it lands.
+  _noteTap(eye, n, songTime, p, dt) {
     const c = this._noteCol(n.ring, n.type);
-    const near = Math.abs(dt) < 0.12;
-    const pulse = 0.6 + 0.4 * Math.sin(this._t * 8 + n.time * 5);   // throb as it nears
-    // faint rim bite-zone so you see exactly where it lands
-    this._rimArc(eye, n.angle, TAP_ARC * arcScale, c, (near ? 0.9 : 0.32) * Math.min(1, p * 2), eye.r * (near ? 0.12 : 0.07), n.lit);
-    // thin snappy streak just behind the arrowhead
+    const near = Math.abs(dt) < 0.1;
+    this._hitRing(eye, n.angle, c, n.lit, p, eye.r * 0.14);
     const head = this._runwayPt(eye, n.angle, p);
-    const tail = this._runwayPt(eye, n.angle, Math.max(0, p - 0.16));
-    this._beam(tail, head, c, n.lit, eye.r * 0.035, eye.r * 0.085);
-    // the arrowhead itself — the unmistakable "flick" icon, pointing inward (toward the eye)
-    const s = eye.r * (0.30 + 0.06 * pulse) * (near ? 1.15 : 1);
-    this._chevron(head, n.angle + Math.PI, s, c, n.lit, Math.min(1, p * 2.2));
+    const tail = this._runwayPt(eye, n.angle, Math.max(0, p - 0.28));
+    // tapered comet trail (several fading orbs from tail → head)
+    for (let i = 1; i <= 4; i++) {
+      const tp = { x: tail.x + (head.x - tail.x) * (i / 4), y: tail.y + (head.y - tail.y) * (i / 4) };
+      this._orb(tp.x, tp.y, eye.r * 0.07 * (i / 4), c, false, 0.5 * Math.min(1, p * 2));
+    }
+    this._orb(head.x, head.y, eye.r * (near ? 0.2 : 0.15), c, n.lit, Math.min(1, p * 2.2));
   }
 
-  // HOLD — a FAT lane BEAM / chunky bar locked at n.angle (clearly heavier than a flick) framed by
-  // rail edges, + a coverage gauge arc on the rim filling with n.coverage. Reads as "park here".
-  _noteHold(eye, n, songTime, p, arcScale = 1) {
+  // HOLD — a big steady ORB that parks on the hit-point, ringed by a GAUGE that fills as you hold it.
+  // Bigger + pulsing + with the filling ring, so it's unmistakably "park the pupil here and keep it".
+  _noteHold(eye, n, songTime, p) {
     const { ctx } = this;
     const c = this._noteCol(n.ring, n.type);
-    const arc = HOLD_ARC * arcScale;
-    const throb = 0.85 + 0.15 * Math.sin(this._t * 6);
-    // fat beam from outside straight into the rim point
-    const head = this._rimPt(eye, n.angle, 1.0);
-    const tail = this._runwayPt(eye, n.angle, songTime < n.time ? p : 1);
-    this._beam(tail, head, c, n.lit, eye.r * 0.20 * throb, eye.r * 0.5);
-    // rail edges flanking the lane so the "fat bar" is unmistakable
-    const v = angleVec(n.angle), perp = { x: -v.y, y: v.x };
-    const off = eye.r * 0.26;
-    ctx.save(); ctx.lineCap = 'round'; ctx.shadowColor = n.lit ? '#fff' : c; ctx.shadowBlur = n.lit ? 14 : 8;
-    ctx.strokeStyle = this._alpha(n.lit ? '#ffffff' : c, 0.55 * Math.min(1, p * 2)); ctx.lineWidth = eye.r * 0.03;
-    for (const sgn of [-1, 1]) {
-      ctx.beginPath();
-      ctx.moveTo(tail.x + perp.x * off * sgn, tail.y + perp.y * off * sgn);
-      ctx.lineTo(head.x + perp.x * off * sgn, head.y + perp.y * off * sgn);
-      ctx.stroke();
+    const hp = this._hitPt(eye, n.angle);
+    const head = songTime < n.time ? this._runwayPt(eye, n.angle, p) : hp;
+    const rr = eye.r * 0.24, throb = 1 + 0.06 * Math.sin(this._t * 6);
+    // the gauge ring around the hit-point
+    ctx.save(); ctx.lineCap = 'round';
+    ctx.shadowColor = c; ctx.shadowBlur = 8;
+    ctx.strokeStyle = this._alpha(c, 0.3 * Math.min(1, p * 2)); ctx.lineWidth = eye.r * 0.045;
+    ctx.beginPath(); ctx.arc(hp.x, hp.y, rr, 0, Math.PI * 2); ctx.stroke();
+    if (n.coverage > 0) {
+      ctx.shadowColor = n.lit ? '#fff' : c; ctx.shadowBlur = n.lit ? 18 : 11;
+      ctx.strokeStyle = this._alpha(n.lit ? '#ffffff' : c, 0.95); ctx.lineWidth = eye.r * 0.055;
+      ctx.beginPath(); ctx.arc(hp.x, hp.y, rr, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * n.coverage); ctx.stroke();
     }
     ctx.restore();
-    // coverage gauge: faint full arc + a bright fill that grows with coverage
-    this._rimArc(eye, n.angle, arc, c, 0.28 * Math.min(1, p * 2), eye.r * 0.18, false);
-    if (n.coverage > 0) this._rimArc(eye, n.angle, arc * n.coverage, c, 0.9, eye.r * 0.26, n.lit);
+    // a faint trail while it flies in
+    if (songTime < n.time) { const t2 = this._runwayPt(eye, n.angle, Math.max(0, p - 0.2)); this._orb(t2.x, t2.y, eye.r * 0.09, c, false, 0.4 * Math.min(1, p * 2)); }
+    this._orb(head.x, head.y, eye.r * 0.21 * throb, c, n.lit, Math.min(1, p * 2));
   }
 
-  // SLIDE — a CURVED ARROW track hugging the rim from angle→angleTo. Faint full curved path to trace,
-  // a bright traced portion up to the current head, and a MOVING ARROWHEAD riding the curve so it
-  // unmistakably reads "trace this curve". Uses noteTargetAngle for the head position.
+  // DRAG (slide) — a glowing energy RIBBON along the hit-radius from angle→angleTo, with a comet ORB
+  // head you follow around it. A faint full path shows the route; the traced part lights up. No arrows.
   _noteSlide(eye, n, songTime, p) {
     const { ctx } = this;
     const c = this._noteCol(n.ring, n.type);
     const a0 = n.angle, a1 = n.angleTo, sweep = wrapPi(a1 - a0);
-    const pathR = eye.r * 0.96;
-    // faint full path to trace
-    ctx.save(); ctx.lineCap = 'round'; ctx.shadowColor = c; ctx.shadowBlur = 8;
-    ctx.beginPath(); ctx.arc(eye.x, eye.y, pathR, a0, a0 + sweep, sweep < 0);
-    ctx.strokeStyle = this._alpha(c, 0.26 * Math.min(1, p * 2)); ctx.lineWidth = eye.r * 0.1; ctx.stroke();
+    const R = eye.r * HIT_FRAC;
+    ctx.save(); ctx.lineCap = 'round';
+    // faint full ribbon to trace
+    ctx.shadowColor = c; ctx.shadowBlur = 8;
+    ctx.beginPath(); ctx.arc(eye.x, eye.y, R, a0, a0 + sweep, sweep < 0);
+    ctx.strokeStyle = this._alpha(c, 0.22 * Math.min(1, p * 2)); ctx.lineWidth = eye.r * 0.06; ctx.stroke();
     // bright traced portion up to the current head
     const u = n.hold > 0 ? Math.max(0, Math.min(1, (songTime - n.time) / n.hold)) : 0;
     if (u > 0) {
-      ctx.shadowColor = n.lit ? '#ffffff' : c; ctx.shadowBlur = n.lit ? 22 : 14;
-      ctx.beginPath(); ctx.arc(eye.x, eye.y, pathR, a0, a0 + sweep * u, sweep < 0);
-      ctx.strokeStyle = this._alpha(n.lit ? '#ffffff' : c, 0.9); ctx.lineWidth = eye.r * 0.15; ctx.stroke();
+      ctx.shadowColor = n.lit ? '#ffffff' : c; ctx.shadowBlur = n.lit ? 20 : 13;
+      ctx.beginPath(); ctx.arc(eye.x, eye.y, R, a0, a0 + sweep * u, sweep < 0);
+      ctx.strokeStyle = this._alpha(n.lit ? '#ffffff' : c, 0.92); ctx.lineWidth = eye.r * 0.08; ctx.stroke();
     }
     ctx.restore();
-    // start-cap dot so you see where the trace BEGINS
-    const startP = this._rimPt(eye, a0, 0.96);
-    ctx.save(); ctx.shadowColor = c; ctx.shadowBlur = 10; ctx.fillStyle = this._alpha(c, 0.7 * Math.min(1, p * 2));
-    ctx.beginPath(); ctx.arc(startP.x, startP.y, eye.r * 0.08, 0, Math.PI * 2); ctx.fill(); ctx.restore();
-    // the MOVING arrowhead riding the curve, pointing along the sweep (the "follow me" head)
+    // the comet head you follow
     const head = noteTargetAngle(n, songTime);
     const onRim = songTime >= n.time;
-    if (onRim) {
-      const hp = this._rimPt(eye, head, 0.96);
-      const tangent = head + (sweep >= 0 ? Math.PI / 2 : -Math.PI / 2);   // along the curve direction
-      this._chevron(hp, tangent, eye.r * 0.26, c, n.lit, 1);
-    } else {
-      // before it's live, a short incoming streak + arrowhead converging on the start
-      const hp = this._runwayPt(eye, a0, p);
-      const tail = this._runwayPt(eye, a0, Math.max(0, p - 0.18));
-      this._beam(tail, hp, c, n.lit, eye.r * 0.06, eye.r * 0.14);
-      this._chevron(hp, a0 + Math.PI, eye.r * 0.24, c, n.lit, Math.min(1, p * 2.2));
-    }
+    const hp = onRim ? this._hitPt(eye, head) : this._runwayPt(eye, a0, p);
+    if (!onRim) { const t2 = this._runwayPt(eye, a0, Math.max(0, p - 0.22)); this._orb(t2.x, t2.y, eye.r * 0.08, c, false, 0.4 * Math.min(1, p * 2)); }
+    this._orb(hp.x, hp.y, eye.r * 0.15, c, n.lit, Math.min(1, p * 2));
   }
 
   // SPIN — rotating CIRCULAR ARROWS chasing around a gauge ring that fills with n.coverage, whirling
@@ -377,38 +371,27 @@ export class Renderer {
     const { ctx } = this;
     const c = this._noteCol(n.ring, n.type);
     const live = songTime >= n.time;
-    const R = eye.r * 1.2;
+    const R = eye.r * 0.62;                  // the spin ring sits on the eye (where the pupil whirls)
     const dir = n.spinDir || 1;
     ctx.save();
     // gauge ring (the track that fills)
-    ctx.shadowColor = c; ctx.shadowBlur = 10;
+    ctx.lineCap = 'round'; ctx.shadowColor = c; ctx.shadowBlur = 9;
     ctx.beginPath(); ctx.arc(eye.x, eye.y, R, 0, Math.PI * 2);
-    ctx.strokeStyle = this._alpha(c, (live ? 0.4 : 0.2) * Math.min(1, p * 2)); ctx.lineWidth = eye.r * 0.12; ctx.stroke();
+    ctx.strokeStyle = this._alpha(c, (live ? 0.35 : 0.18) * Math.min(1, p * 2)); ctx.lineWidth = eye.r * 0.06; ctx.stroke();
     if (n.coverage > 0) {
-      ctx.lineCap = 'round'; ctx.shadowColor = n.lit ? '#fff' : c; ctx.shadowBlur = n.lit ? 22 : 12;
+      ctx.shadowColor = n.lit ? '#fff' : c; ctx.shadowBlur = n.lit ? 20 : 12;
       ctx.beginPath();
       ctx.arc(eye.x, eye.y, R, -Math.PI / 2, -Math.PI / 2 + dir * Math.PI * 2 * n.coverage, dir < 0);
-      ctx.strokeStyle = this._alpha(n.lit ? '#fff' : c, 0.95); ctx.lineWidth = eye.r * 0.16; ctx.stroke();
+      ctx.strokeStyle = this._alpha(n.lit ? '#fff' : c, 0.95); ctx.lineWidth = eye.r * 0.08; ctx.stroke();
     }
     ctx.restore();
-    // two rotating CURVED ARROWS chasing each other around the ring (the "spin me" icon)
-    const spin = this._t * (live ? 6 : 2) * dir;
-    const aR = R * 0.78;                    // radius of the chasing arrows
-    ctx.save(); ctx.lineCap = 'round'; ctx.shadowColor = n.lit ? '#fff' : c; ctx.shadowBlur = live ? 14 : 8;
-    const arcStroke = this._alpha(n.lit ? '#fff' : c, 0.92 * Math.min(1, p * 2));
+    // two glowing comet ORBS whirling around the ring (the "spin me" energy — no arrows)
+    const spin = this._t * (live ? 5 : 2) * dir;
     for (let k = 0; k < 2; k++) {
-      const base = spin + k * Math.PI;
-      const sweep = dir * 0.9;             // ~52° curved arc segment
-      ctx.strokeStyle = arcStroke; ctx.lineWidth = eye.r * 0.09;
-      ctx.beginPath(); ctx.arc(eye.x, eye.y, aR, base, base + sweep, dir < 0); ctx.stroke();
-      // arrowhead at the leading end of the arc, pointing along the rotation
-      const tipA = base + sweep;
-      const tp = { x: eye.x + Math.cos(tipA) * aR, y: eye.y + Math.sin(tipA) * aR };
-      const tangent = tipA + (dir >= 0 ? Math.PI / 2 : -Math.PI / 2);
-      this._chevron(tp, tangent, eye.r * 0.2, c, n.lit, Math.min(1, p * 2));
+      const a = spin + k * Math.PI;
+      this._orb(eye.x + Math.cos(a) * R, eye.y + Math.sin(a) * R, eye.r * 0.1, c, n.lit, Math.min(1, p * 2));
     }
-    ctx.restore();
-    if (live) { ctx.save(); ctx.shadowColor = c; ctx.shadowBlur = 10; ctx.fillStyle = this._alpha('#fff', 0.85); ctx.font = `800 ${eye.r * 0.28}px ${FONT}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('SPIN', eye.x, eye.y - eye.r * 1.7); ctx.restore(); }
+    if (live) { ctx.save(); ctx.shadowColor = c; ctx.shadowBlur = 10; ctx.fillStyle = this._alpha('#fff', 0.85); ctx.font = `800 ${eye.r * 0.24}px ${FONT}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('SPIN', eye.x, eye.y - eye.r * 1.55); ctx.restore(); }
   }
 
   // CENTER — the: concentric rings CLOSING IN onto the eye centre as time nears
@@ -438,10 +421,10 @@ export class Renderer {
   // laser (not just a static glyph) so you see the shoulder/trigger button coming. Side-coloured.
   _modIncoming(eye, n, songTime, p) {
     const { ctx } = this;
-    // ride the incoming head until it lands, then sit on the rim
-    const rp = songTime >= n.time ? this._rimPt(eye, n.angle, 1.4) : this._runwayPt(eye, n.angle, p);
+    // ride the incoming head, then sit just outside the hit-point so it tags the note without hiding it
+    const rp = songTime >= n.time ? this._hitPt(eye, n.angle, HIT_FRAC + 0.34) : this._runwayPt(eye, n.angle, p);
     const c = this._noteCol(n.ring, n.type);
-    const bw = eye.r * 0.62, bh = eye.r * 0.36;
+    const bw = eye.r * 0.5, bh = eye.r * 0.3;
     ctx.save();
     ctx.globalAlpha = Math.min(1, p * 2.2);
     ctx.shadowColor = c; ctx.shadowBlur = 16;
