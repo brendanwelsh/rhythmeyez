@@ -1,48 +1,47 @@
 // eyes3d.js — the two 3D EYES (Three.js) for EYE BEATS.
 //
-// Deliberately simple and CLEAN: two eyeballs floating in an acid-plasma void (no cartoon head — a
-// full face read terribly). Each eye is the player's stick made flesh: the stick is the gaze, and
-// the eye rotates to LOOK toward where you aim (1:1 with the stick, screen y-down) — at rest
-// (centred) it stares straight back at you, the "centre it" cue. Whites go bloodshot and the pupil
-// dilates as combo climbs; the eye whirls during a spin. Round glasses frame the eyes and SURGE
-// with light on the FOCUS bonus (both eyes on-target at once). The 2D note/HUD overlay (render.js)
-// sits on top and targets each eye's projected screen position, exposed via `.screen`.
+// Each eye is a CONTROL STICK: a round eyeball whose IRIS+PUPIL is a cursor that slides across the
+// surface to exactly where your stick points — and that's where the note lands. Push the stick and
+// the pupil glides to that spot on the rim; centre it and the pupil returns to the middle. Hit
+// quality is how close the pupil is to the note's spot (+ timing), so the pupil literally being
+// "on" the note is the hit. The pupil CONSTRICTS as your combo climbs and the whites go BLOODSHOT.
+// No glasses (they confused the hit zone). The 2D note/HUD overlay (render.js) targets each eye's
+// projected screen centre + radius via `.screen`, so its notes line up with the pupil.
 //
 // If a `models/eye.glb` is present it's loaded and used for the eyeballs instead.
 
 import * as THREE from 'three';
 
-const LOOK_MAX = 0.95;          // radians the eye rotates at full stick — big, obvious gaze
-const EYE_R = 1.35;             // eyeball radius (world units)
-const EYE_X = 3.4;              // each eye's distance left/right of centre (~29%/71% of width @16:9)
+const EYE_R = 1.5;              // eyeball radius (world units)
+const EYE_X = 3.0;              // each eye's distance left/right of centre
+const REACH = 0.9;             // fraction of the radius the pupil travels at full stick (matches the rim)
 
 function makeCanvas(s) { const c = document.createElement('canvas'); c.width = c.height = s; return c; }
 
-// Iris: dark limbal ring, radial fibres, a coloured base; transparent outside the disc + small
-// baked pupil (the live combo-scaled pupil sits on top).
+// Iris disc: coloured base + radial fibres + dark limbal ring; transparent outside. The black pupil
+// is a separate mesh on top (so it can constrict).
 function irisTexture(hueDeg) {
   const s = 256, c = makeCanvas(s), x = c.getContext('2d');
   const cx = s / 2, cy = s / 2, R = s * 0.5;
   x.clearRect(0, 0, s, s);
-  const g = x.createRadialGradient(cx, cy, R * 0.16, cx, cy, R);
-  g.addColorStop(0, '#0a0a0a');
-  g.addColorStop(0.20, `hsl(${hueDeg},90%,62%)`);
-  g.addColorStop(0.62, `hsl(${hueDeg},95%,44%)`);
-  g.addColorStop(0.93, `hsl(${(hueDeg + 30) % 360},80%,20%)`);
+  const g = x.createRadialGradient(cx, cy, R * 0.18, cx, cy, R);
+  g.addColorStop(0, '#101014');
+  g.addColorStop(0.24, `hsl(${hueDeg},90%,64%)`);
+  g.addColorStop(0.64, `hsl(${hueDeg},95%,46%)`);
+  g.addColorStop(0.92, `hsl(${(hueDeg + 28) % 360},80%,22%)`);
   g.addColorStop(1, 'rgba(0,0,0,0)');
   x.beginPath(); x.arc(cx, cy, R, 0, Math.PI * 2); x.fillStyle = g; x.fill();
   for (let i = 0; i < 200; i++) {
     const a = (i / 200) * Math.PI * 2 + Math.random() * 0.05;
-    const r0 = R * (0.2 + Math.random() * 0.08), r1 = R * (0.55 + Math.random() * 0.42);
-    x.strokeStyle = `hsla(${(hueDeg + (Math.random() * 40 - 20)) % 360},95%,${55 + Math.random() * 25 | 0}%,${0.22 + Math.random() * 0.28})`;
+    const r0 = R * (0.22 + Math.random() * 0.08), r1 = R * (0.55 + Math.random() * 0.42);
+    x.strokeStyle = `hsla(${(hueDeg + (Math.random() * 36 - 18)) % 360},95%,${58 + Math.random() * 24 | 0}%,${0.2 + Math.random() * 0.26})`;
     x.lineWidth = 0.6 + Math.random();
     x.beginPath(); x.moveTo(cx + Math.cos(a) * r0, cy + Math.sin(a) * r0); x.lineTo(cx + Math.cos(a) * r1, cy + Math.sin(a) * r1); x.stroke();
   }
-  x.beginPath(); x.arc(cx, cy, R * 0.97, 0, Math.PI * 2); x.lineWidth = R * 0.06; x.strokeStyle = 'rgba(0,0,0,0.5)'; x.stroke();
+  x.beginPath(); x.arc(cx, cy, R * 0.96, 0, Math.PI * 2); x.lineWidth = R * 0.05; x.strokeStyle = 'rgba(0,0,0,0.45)'; x.stroke();
   return new THREE.CanvasTexture(c);
 }
 
-// Transparent red veins from the edge — opacity driven by combo (bloodshot).
 function veinsTexture() {
   const s = 512, c = makeCanvas(s), x = c.getContext('2d');
   x.clearRect(0, 0, s, s); x.lineCap = 'round';
@@ -72,60 +71,67 @@ class Eye {
   constructor(side, hue) {
     this.side = side; this.hue = hue;
     this.group = new THREE.Group();
-    this.spinGroup = new THREE.Group();
-    this.group.add(this.spinGroup);
+    this.group.position.x = side === 'L' ? -EYE_X : EYE_X;
 
+    // sclera — a still white eyeball
     const sclera = new THREE.Mesh(
       new THREE.SphereGeometry(EYE_R, 56, 56),
-      new THREE.MeshStandardMaterial({ color: 0xf6f3ec, roughness: 0.35, metalness: 0.0 })
+      new THREE.MeshStandardMaterial({ color: 0xf6f3ec, roughness: 0.34, metalness: 0.0 })
     );
-    this.scleraMat = sclera.material; this.spinGroup.add(sclera);
+    this.scleraMat = sclera.material; this.group.add(sclera);
 
+    // bloodshot overlay (combo-driven)
     this.veins = new THREE.Mesh(
       new THREE.SphereGeometry(EYE_R * 1.004, 40, 40),
       new THREE.MeshBasicMaterial({ map: veinsTexture(), transparent: true, opacity: 0, depthWrite: false })
     );
-    this.spinGroup.add(this.veins);
+    this.group.add(this.veins);
 
+    // CURSOR — iris + pupil that slides across the surface to the aim (this is "where the note hits")
+    this.cursor = new THREE.Group();
     const iris = new THREE.Mesh(
-      new THREE.CircleGeometry(EYE_R * 0.6, 64),
-      new THREE.MeshStandardMaterial({ map: irisTexture(hue), emissive: new THREE.Color().setHSL(hue / 360, 0.9, 0.4), emissiveIntensity: 0.8, transparent: true, roughness: 0.25 })
+      new THREE.CircleGeometry(EYE_R * 0.4, 56),
+      new THREE.MeshStandardMaterial({ map: irisTexture(hue), emissive: new THREE.Color().setHSL(hue / 360, 0.9, 0.45), emissiveIntensity: 0.9, transparent: true, roughness: 0.25 })
     );
-    iris.material.emissiveMap = iris.material.map;
-    iris.position.z = EYE_R * 0.985; this.iris = iris; this.irisMat = iris.material;
-    this.spinGroup.add(iris);
+    iris.material.emissiveMap = iris.material.map; this.irisMat = iris.material;
+    this.cursor.add(iris);
+    // glow halo behind the iris
+    const halo = new THREE.Mesh(new THREE.CircleGeometry(EYE_R * 0.46, 48),
+      new THREE.MeshBasicMaterial({ color: new THREE.Color().setHSL(hue / 360, 1, 0.55), transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending, depthWrite: false }));
+    halo.position.z = -0.01; this.cursor.add(halo);
+    // pupil — black disc + neon limbal ring; CONSTRICTS with combo
+    this.pupil = new THREE.Group();
+    this.pupil.add(new THREE.Mesh(new THREE.CircleGeometry(EYE_R * 0.17, 36), new THREE.MeshBasicMaterial({ color: 0x000000 })));
+    const ring = new THREE.Mesh(new THREE.RingGeometry(EYE_R * 0.17, EYE_R * 0.21, 36),
+      new THREE.MeshBasicMaterial({ color: new THREE.Color().setHSL(hue / 360, 1, 0.6), transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending, depthWrite: false }));
+    this.pupil.add(ring); this.pupilRing = ring.material; this.pupil.position.z = 0.01;
+    this.cursor.add(this.pupil);
+    // wet glint on the iris
+    const glint = new THREE.Sprite(new THREE.SpriteMaterial({ map: glintTexture(), blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, opacity: 0.8 }));
+    glint.scale.setScalar(EYE_R * 0.28); glint.position.set(-EYE_R * 0.12, EYE_R * 0.14, 0.05); this.cursor.add(glint);
 
-    // pupil — small black disc that dilates gently with combo + a thin neon ring
-    const pupil = new THREE.Group();
-    pupil.add(new THREE.Mesh(new THREE.CircleGeometry(EYE_R * 0.16, 40), new THREE.MeshBasicMaterial({ color: 0x000000 })));
-    const ring = new THREE.Mesh(new THREE.RingGeometry(EYE_R * 0.16, EYE_R * 0.2, 40),
-      new THREE.MeshBasicMaterial({ color: new THREE.Color().setHSL(hue / 360, 1, 0.6), transparent: true, opacity: 0.85, blending: THREE.AdditiveBlending, depthWrite: false }));
-    pupil.add(ring); pupil.position.z = EYE_R * 0.992;
-    this.pupil = pupil; this.pupilRing = ring.material; this.spinGroup.add(pupil);
-
-    // wet glint (fixed reflection near the top-left)
-    const glint = new THREE.Sprite(new THREE.SpriteMaterial({ map: glintTexture(), blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, opacity: 0.85 }));
-    glint.scale.setScalar(EYE_R * 0.55); glint.position.set(-EYE_R * 0.3, EYE_R * 0.32, EYE_R * 1.02);
-    this.group.add(glint);
-
-    this.group.position.x = side === 'L' ? -EYE_X : EYE_X;
-    this._yaw = 0; this._pitch = 0; this._roll = 0; this._chomp = 0; this.spinDir = 0;
+    this.cursor.position.set(0, 0, EYE_R);
+    this.group.add(this.cursor);
+    this._px = 0; this._py = 0; this._roll = 0; this._chomp = 0; this.spinDir = 0;
   }
 
   update(aim, dt) {
-    const tx = (aim?.x || 0), ty = (aim?.y || 0);
-    const k = Math.min(1, dt * 22);
-    this._yaw += (tx * LOOK_MAX - this._yaw) * k;
-    this._pitch += (ty * LOOK_MAX - this._pitch) * k;   // +ty: stick down → look down (y-down)
+    // slide the pupil to the aim on the eye surface (screen y-down → 3D y-up)
+    const tx = (aim?.x || 0) * EYE_R * REACH;
+    const ty = -(aim?.y || 0) * EYE_R * REACH;
+    const k = Math.min(1, dt * 24);
+    this._px += (tx - this._px) * k; this._py += (ty - this._py) * k;
+    const r2 = this._px * this._px + this._py * this._py;
+    const pz = Math.sqrt(Math.max(0.04, EYE_R * EYE_R - r2));   // keep it ON the sphere front
+    this.cursor.position.set(this._px, this._py, pz);
     this._roll += this.spinDir * dt * 9;
-    this.group.rotation.set(this._pitch, this._yaw, 0);
-    this.spinGroup.rotation.z = this._roll;
+    this.cursor.rotation.z = this._roll;                        // whirl during a spin
     this._chomp *= Math.pow(0.0001, dt);
-    this.group.scale.setScalar(1 + this._chomp * 0.1);
+    this.cursor.scale.setScalar(1 + this._chomp * 0.18);        // chomp pop on a hit
   }
 
-  setBloodshot(f) { this.veins.material.opacity = Math.max(0, Math.min(1, f)); const p = Math.min(0.4, f * 0.4); this.scleraMat.color.setRGB(1, 1 - p, 1 - p * 0.85); }
-  setPupil(s) { this.pupil.scale.setScalar(s); }
+  setBloodshot(f) { this.veins.material.opacity = Math.max(0, Math.min(1, f)); const p = Math.min(0.45, f * 0.45); this.scleraMat.color.setRGB(1, 1 - p, 1 - p * 0.85); }
+  setPupil(s) { this.pupil.scale.setScalar(s); }              // <1 = constricted (combo)
   setHue(h) { const hh = (((h % 360) + 360) % 360) / 360; this.irisMat.emissive.setHSL(hh, 0.9, 0.45); this.pupilRing.color.setHSL(hh, 1, 0.6); }
   chomp() { this._chomp = 1; }
 }
@@ -137,17 +143,16 @@ export class EyeStage {
     this.renderer.setClearColor(0x000000, 1);
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
-    this.camera.position.set(0, 0, 12);
+    this.camera.position.set(0, 0, 11.5);
 
-    this.scene.add(new THREE.AmbientLight(0x303040, 1.2));
-    this.key = new THREE.DirectionalLight(0xffffff, 1.6); this.key.position.set(0.3, 0.8, 2); this.scene.add(this.key);
-    this.rimL = new THREE.PointLight(0x00f0ff, 50, 40); this.rimL.position.set(-6, 2, 3); this.scene.add(this.rimL);
-    this.rimR = new THREE.PointLight(0xff00e0, 50, 40); this.rimR.position.set(6, -1, 3); this.scene.add(this.rimR);
+    this.scene.add(new THREE.AmbientLight(0x303040, 1.3));
+    this.key = new THREE.DirectionalLight(0xffffff, 1.5); this.key.position.set(0.2, 0.7, 2); this.scene.add(this.key);
+    this.rimL = new THREE.PointLight(0x00f0ff, 45, 40); this.rimL.position.set(-6, 2, 3); this.scene.add(this.rimL);
+    this.rimR = new THREE.PointLight(0xff00e0, 45, 40); this.rimR.position.set(6, -1, 3); this.scene.add(this.rimR);
 
     this._addBackdrop();
     this.L = new Eye('L', 192); this.R = new Eye('R', 320);
     this.scene.add(this.L.group); this.scene.add(this.R.group);
-    this._addGlasses();
 
     this.screen = { L: { x: 0, y: 0, r: 60 }, R: { x: 0, y: 0, r: 60 } };
     this._t = 0;
@@ -156,7 +161,6 @@ export class EyeStage {
     this._tryLoadModel();
   }
 
-  // A dark, slow acid-plasma void behind the eyes (kept dim so the eyes pop).
   _addBackdrop() {
     const mat = new THREE.ShaderMaterial({
       uniforms: { t: { value: 0 } }, depthWrite: false, depthTest: false,
@@ -166,26 +170,12 @@ export class EyeStage {
           vec2 p=(vUv-0.5)*8.0;
           float v=sin(p.x*1.2+t)+sin(p.y*1.4+t*1.1)+sin((p.x+p.y)*0.6+t*0.7)+sin(length(p)*1.1-t*1.3);
           vec3 c=0.5+0.5*cos(vec3(0.0,2.1,4.2)+v*1.8+t*0.3);
-          c*=0.12+0.10*abs(sin(v+t));
+          c*=0.11+0.09*abs(sin(v+t));
           gl_FragColor=vec4(c,1.0);
         }`,
     });
     const bg = new THREE.Mesh(new THREE.PlaneGeometry(110, 70), mat);
     bg.position.z = -8; bg.renderOrder = -10; this.bgMat = mat; this.scene.add(bg);
-  }
-
-  // Clean round glasses: a thick dark frame ring around each eye + a bridge. Emissive surges on FOCUS.
-  _addGlasses() {
-    const frame = new THREE.MeshStandardMaterial({ color: 0x111118, roughness: 0.4, metalness: 0.6, emissive: 0x114455, emissiveIntensity: 0.4 });
-    this.glassesMat = frame;
-    const lensR = EYE_R * 1.28, z = EYE_R + 0.18, tube = 0.13;
-    for (const side of [-1, 1]) {
-      const ring = new THREE.Mesh(new THREE.TorusGeometry(lensR, tube, 14, 48), frame);
-      ring.position.set(side * EYE_X, 0, z); this.scene.add(ring);
-    }
-    const span = 2 * EYE_X - 2 * lensR + 0.2;
-    const bridge = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, span, 12), frame);
-    bridge.rotation.z = Math.PI / 2; bridge.position.set(0, 0, z); this.scene.add(bridge);
   }
 
   async _tryLoadModel() {
@@ -195,7 +185,7 @@ export class EyeStage {
       const { GLTFLoader } = await import('three/addons/loaders/GLTFLoader.js');
       const gltf = await new GLTFLoader().loadAsync('models/eye.glb');
       const fit = (o) => { const b = new THREE.Box3().setFromObject(o); const s = (EYE_R * 2) / b.getSize(new THREE.Vector3()).length(); o.scale.setScalar(s * 1.7); };
-      for (const eye of [this.L, this.R]) { const m = gltf.scene.clone(true); fit(m); eye.spinGroup.clear(); eye.spinGroup.add(m); }
+      for (const eye of [this.L, this.R]) { const m = gltf.scene.clone(true); fit(m); m.add(eye.cursor); eye.group.add(m); }
     } catch { /* keep procedural eyes */ }
   }
 
@@ -215,17 +205,16 @@ export class EyeStage {
     return { x, y, r: Math.abs(ex - x) };
   }
 
-  /** state: { L:{aim,spinDir}, R:{aim,spinDir}, combo, focus } */
+  /** state: { L:{aim,spinDir}, R:{aim,spinDir}, combo } */
   update(state, dt) {
     this._t += dt;
-    const hue = (this._t * 30) % 360;
+    const hue = (this._t * 28) % 360;
     this.rimL.color.setHSL(((hue + 180) % 360) / 360, 1, 0.5);
     this.rimR.color.setHSL((hue % 360) / 360, 1, 0.55);
     if (this.bgMat) this.bgMat.uniforms.t.value = this._t * 0.8;
     const combo = state.combo || 0;
-    const bloodshot = Math.min(1, combo / 30);
-    const pupil = 1 + Math.min(0.7, combo / 45) + Math.sin(this._t * 7) * 0.04;
-    if (this.glassesMat) this.glassesMat.emissiveIntensity = 0.4 + (state.focus ? 2.4 : 0) + Math.sin(this._t * 4) * 0.08;
+    const bloodshot = Math.min(1, combo / 25);                  // bloodshot as combo builds
+    const pupil = 1 - Math.min(0.55, combo / 40);               // CONSTRICTS as combo climbs
     this.L.setHue(196 + Math.sin(this._t * 0.8) * 30);
     this.R.setHue(320 + Math.sin(this._t) * 20);
     for (const k of ['L', 'R']) {

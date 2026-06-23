@@ -665,8 +665,9 @@ class Game {
 
     if (this.state === 'title') this._updateSplash();
 
-    if (this.state === 'playing' && this._devFrozenTime == null) {
+    if (this.state === 'playing') {
       if (this.demo) this._demoAutoplay(songTime);
+      if (this._devFrozenTime == null) {
       // Frame-driven, presence-based scoring: notes resolve themselves as their window passes.
       const dt = Math.max(0, Math.min(0.05, songTime - (this._lastSongTime ?? songTime)));
       this._lastSongTime = songTime;
@@ -689,6 +690,7 @@ class Game {
       if (songTime > this.chart.duration) {
         if (this.demo) this._startChart();                  // loop the attract demo
         else if (!this._ended) { this._ended = true; this._finish(); }
+      }
       }
     } else {
       this.input.takeFlicks(); // drain so flicks don't queue up in menus
