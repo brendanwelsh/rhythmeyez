@@ -93,13 +93,14 @@ function fixOverlaps(all) {
   return kept.sort((x, y) => x.time - y.time);
 }
 
-// MAGNITUDE per note — how far from centre the target sits (0..1). Notes land ALL OVER the eye: a
-// slow per-phrase "breathe" + a per-note ripple; holds park mid-eye.
+// MAGNITUDE per note — FULL variety from the rim (mag~1) down to barely-moved near centre (mag~0.06).
+// Swing a wander value then STRETCH it away from the middle so notes land near an extreme (big throw
+// or tiny nudge), not bunched mid-eye. Holds park more moderate.
 function magFor(i, phrase, type) {
-  if (type === 'hold') return 0.52;
-  const breathe = 0.55 + 0.33 * Math.sin(phrase * 0.7);
-  const ripple = 0.18 * Math.sin(i * 1.3);
-  return +Math.max(0.12, Math.min(0.96, breathe + ripple)).toFixed(3);
+  let m = 0.5 + 0.5 * Math.sin(i * 1.7 + phrase * 0.6);
+  m = 0.5 + (m - 0.5) * 1.7;
+  if (type === 'hold') m = 0.34 + 0.36 * (0.5 + 0.5 * Math.sin(i));
+  return +Math.max(0.06, Math.min(1.0, m)).toFixed(3);
 }
 
 let notes = [];
@@ -116,6 +117,8 @@ for (let i = 0; i < beats.length; i++) {
 
   const template = PHRASES[phrase % PHRASES.length];
   let type = template[pos];
+  // FLICKY: thin most templated holds/slides down to snappy taps so the song plays flickier.
+  if ((type === 'hold' || type === 'slide') && i % 2 === 0) type = 'tap';
 
   // 'rest' drops the beat entirely (keeps the chart breathing / count sane).
   if (type === 'rest' && !(spinPhrases.has(phrase) && pos === 0)) continue;

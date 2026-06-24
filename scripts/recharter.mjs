@@ -101,16 +101,17 @@ function fixOverlaps(all) {
   return kept.sort((x, y) => x.time - y.time);
 }
 
-// MAGNITUDE per note — how far from the eye CENTRE the target sits (0..1). Notes land ALL OVER the
-// eye: a slow per-phrase "breathe" sets how far out the figure sits, a per-note ripple scatters them,
-// corner bursts and flicky bass-runs punch out to the edge, holds park mid-eye.
+// MAGNITUDE per note — how far from the eye CENTRE the target sits (0..1). FULL variety: from the
+// rim (mag~1) right down to barely-moved near centre (mag~0.06). We swing a wander value then STRETCH
+// it away from the middle, so most notes land near an extreme (big eye throw or tiny nudge) rather
+// than all bunched mid-eye. Corner bursts + flicky bass-runs slam the edge; holds park more moderate.
 function magFor(k, phrase, type, motif, dense) {
-  if (type === 'hold') return 0.52;
-  if (motif === 'corners') return 0.9;
-  if (dense) return 0.86;                                    // flicky run → out to the edge
-  const breathe = 0.55 + 0.33 * Math.sin(phrase * 0.7);
-  const ripple = 0.18 * Math.sin(k * 1.3);
-  return +Math.max(0.12, Math.min(0.96, breathe + ripple)).toFixed(3);
+  if (motif === 'corners') return 0.97;
+  if (dense) return 0.92;                                    // flicky run → slam the edge
+  let m = 0.5 + 0.5 * Math.sin(k * 1.7 + phrase * 0.6);      // 0..1 wander
+  m = 0.5 + (m - 0.5) * 1.7;                                 // stretch toward the extremes (edge / centre)
+  if (type === 'hold') m = 0.34 + 0.36 * (0.5 + 0.5 * Math.sin(k));  // holds: moderate but still varied
+  return +Math.max(0.06, Math.min(1.0, m)).toFixed(3);
 }
 
 let notes = [];
@@ -153,10 +154,9 @@ for (let k = 0; k < times.length; k++) {
   if (spinSet.has(k)) type = 'spin';
   else if (dense) type = 'tap';                                      // heavy/fast bits stay snappy flicks
   else if (motif) type = 'tap';                                      // motif phrases are crisp tap figures
-  else if (pos === 0 && g > 0.8) type = 'hold';                       // park on the downbeat
-  else if (pos === 4 && phrase % 3 === 2 && g > 0.8) type = 'hold';   // a second park, occasionally
-  else if (pos === 2 || pos === 5) type = 'slide';                   // two traced lines per phrase
-  else type = 'tap';                                                  // staccato backbone
+  else if (pos === 0 && g > 1.0 && phrase % 2 === 0) type = 'hold';  // an occasional park on a big downbeat
+  else if (pos === 5 && phrase % 2 === 1 && g > 0.5) type = 'slide'; // ~one traced line every other phrase
+  else type = 'tap';                                                 // FLICKS are the backbone now
 
   const note = { time: +t.toFixed(3), ring, angle: motif ? motifAngle(motif, pos) : wrap360(heading) };
   note.mag = magFor(k, phrase, type, motif, dense);                  // place it anywhere centre→edge

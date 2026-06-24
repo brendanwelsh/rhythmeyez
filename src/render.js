@@ -44,8 +44,8 @@ const COLVAR = {
   L: { tap: '#00f0ff', hold: '#2f6bff', slide: '#00b3ff', spin: '#7a4dff', center: '#aef6ff' },
   R: { tap: '#ff2bd6', hold: '#ff4d7a', slide: '#ff66c4', spin: '#c94dff', center: '#ffc2ec' },
 };
-const HIT_FRAC = 0.64;  // the target slot sits ~2/3 of the way out — exactly where the pupil reaches.
-                        // You aim the pupil INTO the slot; when the note arrives there, the eye breaks it.
+const HIT_FRAC = 0.82;  // unit-disc → eye scale (matches the pupil's REACH). A note at mag 1 sits at the
+                        // rim, mag 0 dead centre. You aim the pupil INTO the slot; the eye breaks it on arrival.
 
 export class Renderer {
   constructor(canvas) {
@@ -344,6 +344,21 @@ export class Renderer {
     // a faint trail while it flies in
     if (songTime < n.time) { const t2 = this._runwayPt(eye, n.angle, Math.max(0, p - 0.2), n.mag); this._orb(t2.x, t2.y, eye.r * 0.09, c, false, 0.4 * Math.min(1, p * 2)); }
     this._orb(head.x, head.y, eye.r * 0.21 * throb, c, n.lit, Math.min(1, p * 2));
+    // "HOLD" tag on approach so it's obvious this one is PARK-IN-PLACE (vs a line to draw)
+    if (songTime < n.time - 0.05) this._tag(head, 'HOLD', c, eye.r, Math.min(1, p * 2.2));
+  }
+
+  // small glowing type tag near an incoming note head, so you can tell at a glance what's coming
+  _tag(pt, text, col, r, alpha) {
+    const { ctx } = this;
+    ctx.save();
+    ctx.globalAlpha = Math.min(1, alpha);
+    ctx.shadowColor = col; ctx.shadowBlur = 8;
+    ctx.fillStyle = '#ffffff';
+    ctx.font = `800 ${Math.max(9, r * 0.15)}px ${FONT}`;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(text, pt.x, pt.y - r * 0.3);
+    ctx.restore();
   }
 
   // DRAG (slide) — a glowing energy RIBBON tracing the note's actual 2D PATH across the eye (angle AND
@@ -374,7 +389,13 @@ export class Renderer {
     const onPath = songTime >= n.time;
     const tvh = noteTargetVec(n, songTime);
     const hp = onPath ? { x: eye.x + tvh.x * eye.r * HIT_FRAC, y: eye.y + tvh.y * eye.r * HIT_FRAC } : this._runwayPt(eye, n.angle, p, n.mag);
-    if (!onPath) { const t2 = this._runwayPt(eye, n.angle, Math.max(0, p - 0.22), n.mag); this._orb(t2.x, t2.y, eye.r * 0.08, c, false, 0.4 * Math.min(1, p * 2)); }
+    if (!onPath) {
+      const t2 = this._runwayPt(eye, n.angle, Math.max(0, p - 0.22), n.mag); this._orb(t2.x, t2.y, eye.r * 0.08, c, false, 0.4 * Math.min(1, p * 2));
+      // a tracer dot sweeps the whole route so it's obvious this is a LINE to DRAW (not a spot to hold)
+      const ti = Math.min(N, Math.floor(((this._t * 0.7) % 1) * N));
+      this._orb(pts[ti].x, pts[ti].y, eye.r * 0.055, c, false, 0.7 * Math.min(1, p * 2));
+      if (songTime < n.time - 0.05) this._tag(pts[0], 'DRAW', c, eye.r, Math.min(1, p * 2.2));
+    }
     this._orb(hp.x, hp.y, eye.r * 0.15, c, n.lit, Math.min(1, p * 2));
   }
 
