@@ -114,7 +114,9 @@ export class Eyes2D {
     // foreshorten the iris along the radial axis so it WRAPS onto the eyeball's curve (looks like
     // one attached piece, not a flat disc sliding on top) — squashed more the further it looks.
     const dist = Math.hypot(st.px, st.py);
-    const fs = Math.sqrt(Math.max(0.25, 1 - (dist / e.r) ** 2));
+    // Stronger squash near the rim (no sqrt) so a far-looking iris WRAPS onto the eyeball's curve and
+    // tucks inside the globe instead of getting hard-clipped at the edge.
+    const fs = Math.max(0.16, 1 - (dist / e.r) ** 2);
     const ra = Math.atan2(st.py, st.px);
     ctx.translate(cx, cy);
     ctx.rotate(ra); ctx.scale(fs, 1); ctx.rotate(-ra);
