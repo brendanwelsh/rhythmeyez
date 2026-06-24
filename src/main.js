@@ -29,6 +29,10 @@ const BUILTIN = [
   { title: 'Electric Feel (Justice Remix)', sub: 'MGMT · indie-disco · 107', url: 'beatmaps/electric-feel.json', audio: 'electric-feel.mp3' },
 ];
 
+// Built-in track audio is streamed from a CORS-enabled host (Brendan's chumthewaters.com) so the
+// live build plays the real songs; falls back to a local assets/ file, then a picked file, then groove.
+const AUDIO_BASE = 'https://chumthewaters.com/eyez/';
+
 class Game {
   constructor() {
     this.audio = new AudioEngine();
@@ -350,11 +354,11 @@ class Game {
     this.currentRaw = raw;
     this.audio.clearBuffer();
     if (raw.meta && raw.meta.audio) {
-      const ok = await this.audio.tryLoadUrl('assets/' + raw.meta.audio);
-      // Online there's no copyrighted audio hosted (gitignored). If the player has supplied their
-      // own local file for the bundled track, use that; otherwise fall back to the synth groove.
+      // 1) stream from the CORS host, 2) local assets/ (dev), 3) a player-picked file, 4) synth groove.
+      let ok = AUDIO_BASE ? await this.audio.tryLoadUrl(AUDIO_BASE + raw.meta.audio) : false;
+      if (!ok) ok = await this.audio.tryLoadUrl('assets/' + raw.meta.audio);
       if (!ok && this._localAudioBuffer) this.audio.setBuffer(this._localAudioBuffer);
-      else if (!ok) console.info(`No audio at assets/${raw.meta.audio} — using synth groove.`);
+      else if (!ok) console.info(`No audio for ${raw.meta.audio} — using synth groove.`);
     }
   }
 
